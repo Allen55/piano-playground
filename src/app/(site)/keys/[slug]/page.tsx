@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AdSlot } from "@/components/ad-slot";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { diatonicChords, keyInfo, type Mode } from "@/lib/music";
 import { SITE_URL } from "@/lib/site";
@@ -74,6 +75,8 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
           })}
         </tbody>
       </table>
+
+      <AdSlot />
 
       <h2>All chords in {keyName(key)} with inversions</h2>
       <p>Every triad in the key in root position and each inversion.</p>

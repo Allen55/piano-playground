@@ -1,0 +1,8 @@
+.consent{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;max-width:640px;margin:0 auto;background:#1b2328;border:1px solid #48565e;border-radius:10px;padding:14px 16px;box-shadow:0 12px 40px #000a;font-size:14px;line-height:1.5;color:#c4d0d5}
+.consent p{margin:0 0 10px;color:#c4d0d5}
+.consent-actions{display:flex;gap:8px;flex-wrap:wrap}
+.consent button,.link-button{font:inherit;border-radius:6px;padding:6px 14px;border:1px solid #48565e;background:#242d33;color:#e8edef;cursor:pointer}
+.consent button.primary{background:#a4cbe7;border-color:#b5d8ee;color:#15232e;font-weight:700}
+.link-button{border:0;background:none;padding:0;color:#8abce8;text-decoration:underline}
+.ad-slot{margin:32px 0;min-height:120px;text-align:center}
+.ad-slot small{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6d7b82;margin-bottom:4px}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConsentBanner, PrivacySettingsButton } from "@/components/consent-banner";
 import { SITE_NAME } from "@/lib/site";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -15,7 +16,18 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main className="site-main">{children}</main>
-      <footer className="site-footer"><div className="site-footer-inner"><span>© {SITE_NAME}</span><span>Piano chords, keys and scales</span></div></footer>
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          <span>© {SITE_NAME}</span>
+          <span style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <Link href="/about/">About</Link>
+            <Link href="/privacy/">Privacy</Link>
+            <Link href="/contact/">Contact</Link>
+            <PrivacySettingsButton />
+          </span>
+        </div>
+      </footer>
+      <ConsentBanner />
     </div>
   );
 }

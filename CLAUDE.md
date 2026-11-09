@@ -33,7 +33,6 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 ## Roadmap
 
 - Printable cheat sheets in Letter and A4
-- Sus, dim and aug chord pages (extend `LAUNCH_QUALITIES`)
 - Seventh-chord polish
 - FAQ and theory sections
 - Synth/Piano toggle in the Studio

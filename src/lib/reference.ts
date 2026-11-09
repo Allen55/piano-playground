@@ -124,6 +124,30 @@ export function relatedChords(chord: Chord): RelatedChord[] {
       add("Suspended second", chord.root, "sus2");
       add("Suspended fourth", chord.root, "sus4");
       break;
+    case "diminished":
+      add("Minor triad", chord.root, "minor");
+      add("Diminished seventh", chord.root, "dim7");
+      add("Half-diminished seventh", chord.root, "halfDim7");
+      add("Dominant seventh containing it", spell(chord.root, 6, 8), "dom7");
+      break;
+    case "augmented":
+      add("Major triad", chord.root, "major");
+      add("Same notes", canonicalRoot(pitchClass(chord.root) + 4, "augmented"), "augmented");
+      add("Same notes", canonicalRoot(pitchClass(chord.root) + 8, "augmented"), "augmented");
+      break;
+    case "sus2":
+      add("Major triad", chord.root, "major");
+      add("Minor triad", chord.root, "minor");
+      add("Suspended fourth", chord.root, "sus4");
+      add("Same notes", spell(chord.root, 5, 7), "sus4");
+      break;
+    case "sus4":
+      add("Major triad", chord.root, "major");
+      add("Minor triad", chord.root, "minor");
+      add("Suspended second", chord.root, "sus2");
+      add("Dominant seventh suspended fourth", chord.root, "dom7sus4");
+      add("Same notes", spell(chord.root, 4, 5), "sus2");
+      break;
     case "maj7":
       add("Major triad", chord.root, "major");
       add("Dominant seventh", chord.root, "dom7");
@@ -207,7 +231,7 @@ export function totalMovement(steps: { midi: number[] }[]): number {
 // ------------------------------------------------------------ page helpers
 
 /** Qualities that get a chord page at launch. Everything else stays unpublished until it has unique content. */
-export const LAUNCH_QUALITIES: Quality[] = ["major", "minor"];
+export const LAUNCH_QUALITIES: Quality[] = ["major", "minor", "diminished", "augmented", "sus2", "sus4"];
 export function isLaunchChord(chord: Chord): boolean { return LAUNCH_QUALITIES.includes(chord.quality); }
 
 /** The canonically spelled chord that owns the page for this chord (A♯ major -> B♭ major). */
@@ -225,4 +249,44 @@ export function enharmonicAlias(chord: Chord): string | undefined {
 /** Plain-text description of a chord voicing for alt text and screen readers. */
 export function chordAltText(chord: Chord, inversion: Inversion): string {
   return `${chord.fullName}, ${inversion.label.toLowerCase()}: ${inversion.names.join(", ")} (lowest note ${inversion.bass}) on a piano keyboard`;
+}
+
+/** Other ways the chord symbol is written, e.g. C, CM, Cmaj. The first entry is the site's own symbol. */
+const SYMBOL_SUFFIXES: Partial<Record<Quality, string[]>> = {
+  major: ["", "M", "maj"], minor: ["m", "min", "−"], diminished: ["dim", "°", "m♭5"], augmented: ["+", "aug", "(♯5)"],
+  sus2: ["sus2", "2"], sus4: ["sus4", "sus"],
+};
+export function symbolAliases(chord: Chord): string[] {
+  return (SYMBOL_SUFFIXES[chord.quality] ?? [CHORDS[chord.quality].suffix]).map(s => chord.root + s);
+}
+
+/** The interval between two stacked chord tones, by size in semitones. */
+export const STEP_NAMES: Record<number, string> = { 1: "minor second", 2: "major second", 3: "minor third", 4: "major third", 5: "perfect fourth", 6: "tritone", 7: "perfect fifth" };
+
+/** Plain key name for theory spellings that land on another key: B♭♭ -> A, E♯ -> F, F♯♯ -> G. Undefined when the name is already plain. */
+export function keyboardName(note: string): string | undefined {
+  const plain = ["C", "C♯", "D", "E♭", "E", "F", "F♯", "G", "A♭", "A", "B♭", "B"][pitchClass(note)];
+  const alt = { "C♯": "D♭", "E♭": "D♯", "F♯": "G♭", "A♭": "G♯", "B♭": "A♯" }[plain];
+  return note === plain || note === alt ? undefined : plain;
+}
+
+export type ScaleFit = { tonic: string; mode: Mode; numeral: string };
+const DEGREE_NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII"];
+
+/**
+ * Keys whose scale contains every note of the chord, with the chord named from the scale degree of its root
+ * (Csus4 is IVsus4 in G major). Used for chords that are not one of a key's seven standard triads.
+ */
+export function keysWithAllNotes(chord: Chord): ScaleFit[] {
+  const pitches = chord.notes.map(pitchClass);
+  return allKeys().flatMap(key => {
+    const scale = diatonicChords(key.tonic, key.mode).map(d => pitchClass(d.chord.root));
+    if (!pitches.every(p => scale.includes(p))) return [];
+    return [{ ...key, numeral: DEGREE_NUMERALS[scale.indexOf(pitches[0])] + CHORDS[chord.quality].suffix }];
+  });
+}
+
+/** The harmonic minor key in which an augmented triad is the III+ chord (C+ is III+ in A harmonic minor). */
+export function harmonicMinorHome(chord: Chord): string {
+  return MINOR_KEYS.find(k => pitchClass(k) === (pitchClass(chord.root) + 9) % 12)!;
 }

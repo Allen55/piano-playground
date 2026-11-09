@@ -10,7 +10,7 @@ export default function AboutPage() {
       <h1>About {SITE_NAME}</h1>
       <p className="lede">{SITE_NAME} is a reference for piano chords, keys and scales, with keyboard diagrams for every chord and inversion.</p>
       <h2>What is covered</h2>
-      <p>Every major and minor chord, the 24 major and minor keys with their scales and seven chords, and each chord in root position and every inversion. The <Link href="/studio/">Studio</Link> lets you build progressions and hear them.</p>
+      <p>Every major, minor, diminished, augmented, sus2 and sus4 chord, the 24 major and minor keys with their scales and seven chords, and each chord in root position and every inversion. The <Link href="/studio/">Studio</Link> lets you build progressions and hear them.</p>
       <h2>How the information is produced</h2>
       <p>Note names, chord formulas, key signatures and inversions are computed from music theory rules by the site's own code, and the keyboard diagrams are drawn from the same data. This keeps every page consistent: a chord's notes on the diagram are always the notes listed in the text.</p>
       <p>Chords are spelled with one standard name per page (for example D♭ major, with C♯ major noted as another name). Inversions are shown with the chosen chord tone as the lowest note.</p>

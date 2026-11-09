@@ -6,17 +6,17 @@ import { KeyboardSvg } from "@/components/keyboard-svg";
 import { chordAltText, chordPages, chordSlug, inversions } from "@/lib/reference";
 
 export const metadata: Metadata = {
-  title: "Piano Chord Chart: All Major and Minor Chords with Inversions",
-  description: "Every major and minor piano chord on a keyboard diagram, with notes, root position and both inversions.",
+  title: "Piano Chord Chart: All Chords with Notes and Inversions",
+  description: "Every major, minor, diminished, augmented, sus2 and sus4 piano chord on a keyboard diagram, with notes, root position and both inversions.",
   alternates: { canonical: "/chords/" },
 };
 
 export default function ChordsChart() {
-  const groups = [["Major chords", "major"], ["Minor chords", "minor"]] as const;
+  const groups = [["Major chords", "major"], ["Minor chords", "minor"], ["Diminished chords", "diminished"], ["Augmented chords", "augmented"], ["Suspended second (sus2) chords", "sus2"], ["Suspended fourth (sus4) chords", "sus4"]] as const;
   return (
     <>
       <h1>Piano chord chart</h1>
-      <p className="lede">All 24 major and minor chords on the keyboard. Switch between root position and each inversion; the notes are listed on every card. Use your browser's print command for a one-page-per-section copy.</p>
+      <p className="lede">All 72 major, minor, diminished, augmented, sus2 and sus4 chords on the keyboard. Switch between root position and each inversion; the notes are listed on every card. Use your browser's print command for a one-page-per-section copy.</p>
       <ChordChartToggle>
         {groups.map(([title, quality]) => (
           <section key={quality}>

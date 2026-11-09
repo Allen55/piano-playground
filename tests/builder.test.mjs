@@ -46,3 +46,15 @@ test("URL state round-trips and rejects bad input", () => {
   assert.deepEqual(parseBuilderQuery("?p=1-4-5&inv=1").inversion, [1, 0, 0]);
   assert.deepEqual(parseBuilderQuery("?key=h-major&p=9&inv=bogus"), DEFAULT_BUILDER);
 });
+
+test("Studio links carry per-chord qualities", async () => {
+  const { studioHref, parseQualities } = await import("../src/lib/builder.ts");
+  const state = { key: { tonic: "C", mode: "major" }, degrees: [1, 4, 5], sevenths: false, inversion: "smooth" };
+  const href = studioHref(state, ["dom7", "dom7", "dom7"]);
+  assert.equal(href, "/studio/?key=c-major&p=1-4-5&inv=smooth&q=dom7-dom7-dom7");
+  const params = new URLSearchParams(href.split("?")[1]);
+  assert.deepEqual(parseQualities(params, 3), ["dom7", "dom7", "dom7"]);
+  assert.equal(parseQualities(params, 4), undefined);
+  assert.equal(parseQualities(new URLSearchParams("q=dom7-bogus-dom7"), 3), undefined);
+  assert.equal(studioHref(state), "/studio/?key=c-major&p=1-4-5&inv=smooth");
+});

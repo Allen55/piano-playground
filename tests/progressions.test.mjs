@@ -1,11 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { PROGRESSIONS, getProgression, keysFor, progressionChords, stripSteps, voiceLeadingText } from "../src/lib/progressions.ts";
+import { PROGRESSIONS, builderChordType, distinctSteps, getProgression, keysFor, outsideNotes, progressionChords, stripSteps, voiceLeadingText } from "../src/lib/progressions.ts";
 
 test("launch progressions have stable names and slugs", () => {
-  assert.deepEqual(PROGRESSIONS.map(p => p.name), ["I-V-vi-IV", "I-vi-IV-V", "ii-V-I", "I-IV-V", "vi-IV-I-V", "i-VI-III-VII"]);
-  assert.deepEqual(PROGRESSIONS.map(p => p.slug), ["i-v-vi-iv", "i-vi-iv-v", "ii-v-i", "i-iv-v", "vi-iv-i-v", "i-vi-iii-vii"]);
-  assert.equal(new Set(PROGRESSIONS.map(p => p.slug)).size, 6);
+  assert.deepEqual(PROGRESSIONS.slice(0, 6).map(p => p.name), ["I-V-vi-IV", "I-vi-IV-V", "ii-V-I", "I-IV-V", "vi-IV-I-V", "i-VI-III-VII"]);
+  assert.deepEqual(PROGRESSIONS.map(p => p.slug), ["i-v-vi-iv", "i-vi-iv-v", "ii-v-i", "i-iv-v", "vi-iv-i-v", "i-vi-iii-vii", "minor-ii-v-i", "i-vi-ii-v", "iii-vi-ii-v", "12-bar-blues", "quick-change-blues", "minor-blues"]);
+  assert.equal(new Set(PROGRESSIONS.map(p => p.slug)).size, PROGRESSIONS.length);
+  assert.ok(PROGRESSIONS.every(p => /^[a-z0-9-]+$/.test(p.slug)));
   assert.equal(getProgression("i-v-vi-iv").numerals.join(" "), "I V vi IV");
 });
 
@@ -27,4 +28,34 @@ test("voice leading text names the notes that stay and move", () => {
   const root = stripSteps(progressionChords(p, "C"), "root");
   assert.ok(root.every(s => s.inversion.index === 0));
   assert.ok(stripSteps(progressionChords(p, "C"), "second").every(s => s.inversion.index === 2));
+});
+
+test("jazz progressions use seventh chords", () => {
+  const symbols = (slug, tonic) => progressionChords(getProgression(slug), tonic).map(c => c.symbol);
+  assert.deepEqual(symbols("ii-v-i", "C"), ["Dm7", "G7", "Cmaj7"]);
+  assert.deepEqual(getProgression("ii-v-i").numerals, ["ii7", "V7", "Imaj7"]);
+  assert.deepEqual(symbols("ii-v-i", "B♭"), ["Cm7", "F7", "B♭maj7"]);
+  assert.deepEqual(symbols("minor-ii-v-i", "A"), ["Bm7♭5", "E7", "Am7"]);
+  assert.deepEqual(symbols("i-vi-ii-v", "C"), ["Cmaj7", "Am7", "Dm7", "G7"]);
+  assert.deepEqual(symbols("iii-vi-ii-v", "F"), ["Am7", "Dm7", "Gm7", "C7"]);
+  assert.equal(builderChordType(getProgression("ii-v-i")), "sevenths");
+  assert.equal(builderChordType(getProgression("i-v-vi-iv")), "triads");
+  assert.equal(builderChordType(getProgression("minor-ii-v-i")), undefined);
+  const smooth = stripSteps(progressionChords(getProgression("ii-v-i"), "C"), "smooth");
+  assert.equal(voiceLeadingText(smooth[0], smooth[1]), "D stays; F stays; A moves down 2 semitones to G; C moves down 1 semitone to B");
+});
+
+test("blues progressions are 12 bars of dominant sevenths", () => {
+  const blues = getProgression("12-bar-blues");
+  assert.equal(blues.degrees.length, 12);
+  assert.equal(blues.beats, 4);
+  assert.deepEqual(progressionChords(blues, "C").map(c => c.symbol), ["C7", "C7", "C7", "C7", "F7", "F7", "C7", "C7", "G7", "F7", "C7", "G7"]);
+  assert.deepEqual(progressionChords(getProgression("quick-change-blues"), "G").slice(0, 2).map(c => c.symbol), ["G7", "C7"]);
+  assert.deepEqual(distinctSteps(blues).map(s => s.numeral), ["I7", "IV7", "V7"]);
+  assert.deepEqual(progressionChords(getProgression("minor-blues"), "A").map(c => c.symbol).slice(8), ["F7", "E7", "Am7", "E7"]);
+  assert.deepEqual(outsideNotes(progressionChords(blues, "C")[0], "C", "major"), ["B♭"]);
+  assert.deepEqual(outsideNotes(progressionChords(blues, "C")[1 + 3], "C", "major"), ["E♭"]);
+  assert.equal(keysFor(blues).length, 12);
+  const steps = stripSteps(progressionChords(blues, "C"), "smooth");
+  assert.equal(voiceLeadingText(steps[0], steps[1]), "same chord, nothing moves");
 });

@@ -26,3 +26,5 @@
 .card-inversion select{font:inherit;background:#20292e;color:#e8edef;border:1px solid #39454c;border-radius:6px;padding:3px 6px}
 @media (max-width:520px){.numeral-pad{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media print{.numeral-pad,.strip-links,.card-remove,.card-inversion,.builder-input,.builder-hint{display:none}}
+@media (min-width:900px){.strip-bars{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.strip-bars .strip-card .vl{font-size:13px}

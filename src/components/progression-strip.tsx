@@ -7,7 +7,7 @@ import { InstrumentToggle } from "@/components/instrument-toggle";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { useStripPlayer } from "@/components/use-strip-player";
 import { builderHref, studioHref, type BuilderState } from "@/lib/builder";
-import { defaultTonic, getProgression, keysFor, progressionChords, stripSteps, voiceLeadingText, type InversionMode } from "@/lib/progressions";
+import { builderChordType, defaultTonic, getProgression, keysFor, progressionChords, stripSteps, voiceLeadingText, type InversionMode } from "@/lib/progressions";
 import { chordAltText } from "@/lib/reference";
 
 const MODES: [InversionMode, string][] = [["root", "Root position"], ["first", "1st inversion"], ["second", "2nd inversion"], ["smooth", "Smooth"]];
@@ -21,11 +21,12 @@ export function ProgressionStrip({ slug }: { slug: string }) {
 
   const chords = progressionChords(progression, tonic);
   const steps = stripSteps(chords, mode);
-  const player = useStripPlayer(steps.map(s => s.midi), bpm);
+  const player = useStripPlayer(steps.map(s => s.midi), bpm, progression.beats);
+  const chordType = builderChordType(progression);
   const handoff: BuilderState = {
     key: { tonic, mode: progression.mode },
     degrees: progression.degrees,
-    sevenths: false,
+    sevenths: chordType === "sevenths",
     inversion: mode === "smooth" ? "smooth" : steps.map(s => s.inversion.index),
   };
 
@@ -46,10 +47,10 @@ export function ProgressionStrip({ slug }: { slug: string }) {
         <button type="button" className="play-btn" style={{ margin: 0 }} onClick={() => player.toggle()}>{player.playing ? "Stop" : "Play all"}</button>
         <InstrumentToggle />
       </div>
-      <div className="strip">
+      <div className={`strip${progression.barsPerRow ? " strip-bars" : ""}`}>
         {steps.map((step, i) => (
           <div key={i} className={`strip-card${player.active === i ? " active" : ""}`}>
-            <h3>{step.chord.symbol}<small>{progression.numerals[i]} in {tonic} {progression.mode}</small></h3>
+            <h3>{step.chord.symbol}<small>{progression.barsPerRow ? `Bar ${i + 1} · ` : ""}{progression.numerals[i]} in {tonic} {progression.mode}</small></h3>
             <KeyboardSvg label={chordAltText(step.chord, step.inversion)} notes={step.midi.map((midi, n) => ({ midi, role: step.inversion.roles[n], label: step.inversion.names[n] }))} />
             <p>{step.inversion.label}: {step.inversion.names.join(" – ")}</p>
             {i > 0 && <p className="vl">From {steps[i - 1].chord.symbol}: {voiceLeadingText(steps[i - 1], step)}.</p>}
@@ -57,8 +58,8 @@ export function ProgressionStrip({ slug }: { slug: string }) {
         ))}
       </div>
       <p className="strip-links">
-        <Link href={builderHref(handoff)}>Edit in the progression builder</Link>
-        <Link href={studioHref(handoff)}>Open in Studio</Link>
+        {chordType && <Link href={builderHref(handoff)}>Edit in the progression builder</Link>}
+        <Link href={studioHref(handoff, chordType ? undefined : progression.qualities)}>Open in Studio</Link>
       </p>
     </div>
   );

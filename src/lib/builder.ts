@@ -1,5 +1,5 @@
 // Progression builder state: parsing typed progressions, the shareable URL, and the strip it produces.
-import { diatonicChords, type Chord } from "./music.ts";
+import { CHORDS, diatonicChords, type Chord, type Quality } from "./music.ts";
 import { inversions, keySlug, parseKeySlug, seventhNumeral, smoothInversions, type KeyRef } from "./reference.ts";
 import type { StripStep } from "./progressions.ts";
 
@@ -84,4 +84,18 @@ export function builderQuery(state: BuilderState): string {
 }
 
 export const builderHref = (state: BuilderState): string => `/progressions/builder/${builderQuery(state)}`;
-export const studioHref = (state: BuilderState): string => `/studio/${builderQuery(state)}`;
+/**
+ * Studio link. `qualities` overrides each chord's type for progressions the builder cannot express
+ * (I7–IV7–V7 blues, minor V7), as ?q=dom7-dom7-min7.
+ */
+export function studioHref(state: BuilderState, qualities?: Quality[]): string {
+  const q = qualities?.length ? `&q=${qualities.join("-")}` : "";
+  return `/studio/${builderQuery(state)}${q}`;
+}
+
+/** Per-chord quality overrides from ?q=, only when every one is a known quality and the count matches. */
+export function parseQualities(params: URLSearchParams, count: number): Quality[] | undefined {
+  const q = params.get("q")?.split("-");
+  if (!q || q.length !== count || !q.every(id => id in CHORDS)) return undefined;
+  return q as Quality[];
+}

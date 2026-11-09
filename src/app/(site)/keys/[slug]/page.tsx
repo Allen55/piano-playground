@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ad-slot";
+import { ChordMap } from "@/components/chord-map";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { diatonicChords, keyInfo, type Mode } from "@/lib/music";
 import { SITE_URL } from "@/lib/site";
-import { allKeys, chordAltText, chordSlug, inversions, isLaunchChord, keySlug, pageChordFor, parseKeySlug } from "@/lib/reference";
+import { allKeys, chordSlug, isLaunchChord, keySlug, pageChordFor, parseKeySlug } from "@/lib/reference";
 import { keyName, parallelKey, relativeKey, scaleMidi } from "@/lib/keys";
 
 export const dynamicParams = false;
@@ -79,20 +80,11 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
       <AdSlot />
 
       <h2>All chords in {keyName(key)} with inversions</h2>
-      <p>Every triad in the key in root position and each inversion.</p>
-      {triads.map(t => (
-        <section key={t.numeral} style={{ marginTop: 22 }}>
-          <h3>{t.numeral}: {t.chord.fullName}</h3>
-          <div className="inv-grid">
-            {inversions(t.chord).map(i => (
-              <div className="inv-card" key={i.label}>
-                <KeyboardSvg label={chordAltText(t.chord, i)} notes={i.midi.map((midi, n) => ({ midi, role: i.roles[n], label: i.names[n] }))} />
-                <p>{i.label}: {i.names.join(" – ")}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+      <p>Triads on the left, the matching seventh chords on the right. Use the buttons on each chord to switch inversion.</p>
+      <ChordMap rows={triads.map((t, i) => {
+        const page = pageChordFor(t.chord);
+        return { numeral: t.numeral, triad: t.chord, seventh: sevenths[i].chord, triadHref: isLaunchChord(page) ? `/chords/${chordSlug(page)}/` : undefined };
+      })} />
     </>
   );
 }

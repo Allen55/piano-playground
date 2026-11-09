@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { KeyboardSvg, ROLE_FILL } from "@/components/keyboard-svg";
+import { InstrumentToggle } from "@/components/instrument-toggle";
 import { playNotes } from "@/lib/audio";
 import type { ToneRole } from "@/lib/music";
 
@@ -26,6 +27,7 @@ export function ChordExplorer({ symbol, inversions }: { symbol: string; inversio
       <div className="legend">{roles.map(r => <span key={r}><i style={{ background: ROLE_FILL[r] }} />{ROLE_LABELS[r]}</span>)}</div>
       <button type="button" className="play-btn" onClick={() => playNotes(inv.midi, false, 1.6)}>Play chord</button>
       <button type="button" className="play-btn" style={{ marginLeft: 8 }} onClick={() => playNotes(inv.midi, true, 1.2)}>Play arpeggio</button>
+      <InstrumentToggle />
     </div>
   );
 }

@@ -10,7 +10,7 @@ export default function PrivacyPage() {
       <h1>Privacy policy</h1>
       <p className="lede">{SITE_NAME} does not require an account and does not ask you for personal information.</p>
       <h2>Information the site handles</h2>
-      <p>The site's hosting provider keeps standard server logs (such as IP address, browser type and the pages requested) for security and operations. The Studio can save progressions; these are stored in your own browser using local storage and are not sent to the site.</p>
+      <p>The site's hosting provider keeps standard server logs (such as IP address, browser type and the pages requested) for security and operations. The Studio can save progressions; these are stored in your own browser using local storage and are not sent to the site. If you choose the Piano sound, the browser downloads piano sample files from the host named in the site's configuration, which can see your IP address in the same way as any file host. Your Synth or Piano choice is remembered in local storage.</p>
       <h2>Advertising</h2>
       <p>The site is supported by advertising. Ads are loaded only after you choose "Accept ads". If you choose "No ads", no advertising code is loaded. When ads are shown, Google and its partners may use cookies or similar technologies to serve and measure ads, which can include ads based on your visits to this and other sites. You can read how Google uses data from sites that use its services at <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>, and manage ad personalization at <a href="https://adssettings.google.com" rel="noopener noreferrer">adssettings.google.com</a>.</p>
       <h2>Your choices</h2>

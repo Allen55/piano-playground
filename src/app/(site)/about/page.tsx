@@ -14,6 +14,8 @@ export default function AboutPage() {
       <h2>How the information is produced</h2>
       <p>Note names, chord formulas, key signatures and inversions are computed from music theory rules by the site's own code, and the keyboard diagrams are drawn from the same data. This keeps every page consistent: a chord's notes on the diagram are always the notes listed in the text.</p>
       <p>Chords are spelled with one standard name per page (for example D♭ major, with C♯ major noted as another name). Inversions are shown with the chosen chord tone as the lowest note.</p>
+      <h2>Sound credits</h2>
+      <p>The Piano sound uses the Salamander Grand Piano by Alexander Holm, licensed under <a href="https://creativecommons.org/licenses/by/3.0/" rel="noopener noreferrer">CC BY 3.0</a> (<a href="https://sfzinstruments.github.io/pianos/salamander" rel="noopener noreferrer">source</a>). The Synth sound is generated in your browser.</p>
       <h2>Corrections</h2>
       <p>If you find a mistake, please <Link href="/contact/">get in touch</Link>.</p>
     </>

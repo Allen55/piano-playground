@@ -11,6 +11,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <nav className="site-nav" aria-label="Main">
             <Link href="/keys/">Keys</Link>
             <Link href="/chords/">Chords</Link>
+            <Link href="/progressions/">Progressions</Link>
             <Link href="/studio/">Studio</Link>
           </nav>
         </div>

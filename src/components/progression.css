@@ -1,0 +1,11 @@
+.strip-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
+.strip-controls label{font-size:14px;color:#a9bac2;display:flex;gap:6px;align-items:center}
+.strip-controls select{font:inherit;background:#20292e;color:#e8edef;border:1px solid #39454c;border-radius:6px;padding:5px 8px}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.strip-card{border:1px solid #2c373d;background:#171e22;border-radius:8px;padding:12px}
+.strip-card.active{border-color:#83adc4;box-shadow:0 0 0 1px #83adc4}
+.strip-card h3{font-size:20px;margin:0}
+.strip-card h3 small{font-size:13px;font-weight:400;color:#8d9ba2;margin-left:6px}
+.strip-card p{font-size:14px;margin:6px 0 0}
+.strip-card .vl{color:#9fb5bf}
+@media print{.strip-controls{display:none}.strip-card{background:#fff;border-color:#999;break-inside:avoid}.strip-card h3,.strip-card p{color:#000!important}}

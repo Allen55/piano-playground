@@ -13,6 +13,7 @@ export default function ProgressionsIndex() {
     <>
       <h1>Piano chord progressions</h1>
       <p className="lede">Each progression shows its chords laid out in a row, in any key, with inversions and the notes that move between chords.</p>
+      <p>Want a different progression? <Link href="/progressions/builder/">Open the progression builder</Link> and type any sequence of scale degrees, such as 1-5-6-4, in any key.</p>
       <table className="data-table">
         <thead><tr><th>Progression</th><th>Mode</th><th>Example</th></tr></thead>
         <tbody>

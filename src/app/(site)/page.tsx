@@ -35,7 +35,7 @@ export default function HomePage() {
       <p style={{ marginTop: 12 }}><Link href="/chords/">Full chord chart with inversions</Link>, covering all {bySlug.size} major and minor chords.</p>
 
       <h2>Chord progressions</h2>
-      <p>See a progression such as I-V-vi-IV laid out chord by chord in any key, with inversions. <Link href="/progressions/">All progressions</Link></p>
+      <p>See a progression such as I-V-vi-IV laid out chord by chord in any key, with inversions. <Link href="/progressions/">All progressions</Link> or <Link href="/progressions/builder/">build your own</Link>.</p>
 
       <h2>Practice in the Studio</h2>
       <p>Build a progression, hear it with voice-leading between chords and see each voicing on the keys. <Link href="/studio/">Open the Studio</Link></p>

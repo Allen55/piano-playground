@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ChordLayoutCard } from "@/components/chord-layout-card";
 import { Piano } from "@/components/piano";
 import { playMidi, playNotes } from "@/lib/audio";
+import { parseBuilderQuery } from "@/lib/builder";
 import { CHORDS, KEY_SIGNATURES, MAJOR_KEYS, MINOR_KEYS, diatonicChords, keyInfo, makeChord, makePresets, makeVoicings, midiName, nearestVoicing, optimizeProgression, scaleDegreeLabels, scaleNotes, stepChord, type Mode, type ProgressionStep, type Quality, type ScaleType } from "@/lib/music";
 
 const SCALE_OPTIONS: ScaleType[] = ["major","natural minor","harmonic minor","melodic minor","major pentatonic","minor pentatonic","blues","dorian","mixolydian","lydian"];
@@ -64,6 +65,8 @@ export default function Home() {
   const sustainRef = useRef(sustain); sustainRef.current=sustain;
 
   useEffect(()=>{ try { const raw=localStorage.getItem("keyframe-saved"); if(raw) setSaved(JSON.parse(raw)); const prefs=localStorage.getItem("keyframe-prefs"); if(prefs){ const p=JSON.parse(prefs); if(p.octaves) setOctaves(p.octaves); if(typeof p.showLabels==="boolean") setShowLabels(p.showLabels); } } catch {} },[]);
+  // A progression sent from the site's builder or progression pages: ?key=g-major&p=1-5-6-4&chords=sevenths&inv=smooth
+  useEffect(()=>{ const params=new URLSearchParams(window.location.search); if(!params.get("p")) return; const s=parseBuilderQuery(params); const chords=diatonicChords(s.key.tonic,s.key.mode,s.sevenths); const imported=s.degrees.map(degree=>({id:uid(),degree,quality:chords[degree-1].chord.quality,beats:4})); setMode(s.key.mode);setTonic(s.key.tonic);setScaleType(s.key.mode==="major"?"major":"natural minor");setExploreRoot(s.key.tonic);setSteps(s.inversion==="smooth"?optimizeProgression(imported,s.key.tonic,s.key.mode):imported);setPresetId("custom");setSelectedIndex(0); },[]);
   useEffect(()=>{ try { localStorage.setItem("keyframe-prefs",JSON.stringify({octaves,showLabels})); } catch {} },[octaves,showLabels]);
 
   const info=useMemo(()=>keyInfo(tonic,mode),[tonic,mode]);

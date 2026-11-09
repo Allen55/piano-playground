@@ -84,3 +84,14 @@ test("smooth inversions keep the hand close", () => {
   assert.ok(totalMovement(smooth) < totalMovement(rootOnly));
   for (const step of smooth) assert.ok(Math.min(...step.midi) >= 48 && Math.max(...step.midi) <= 83);
 });
+
+test("inversions carry matching roles and page helpers canonicalise", async () => {
+  const { pageChordFor, enharmonicAlias, chordAltText, isLaunchChord } = await import("../src/lib/reference.ts");
+  const inv = inversions(makeChord("C", "major"))[1];
+  assert.deepEqual(inv.roles, ["third", "fifth", "root"]);
+  assert.equal(pageChordFor(makeChord("A♯", "major")).root, "B♭");
+  assert.equal(enharmonicAlias(makeChord("D♭", "major")), "C♯");
+  assert.equal(enharmonicAlias(makeChord("C", "major")), undefined);
+  assert.ok(chordAltText(makeChord("C", "major"), inv).includes("1st inversion"));
+  assert.ok(isLaunchChord(makeChord("C", "minor")) && !isLaunchChord(makeChord("C", "maj7")));
+});

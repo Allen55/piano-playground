@@ -1,7 +1,7 @@
 // Reference-site layer on top of the music engine in music.ts.
 // Everything here is pure (no React, no audio) so it can run at build time
 // to generate static chord pages, key hubs and print sheets.
-import { CHORDS, MAJOR_KEYS, MINOR_KEYS, diatonicChords, makeChord, pitchClass, spell, type Chord, type Mode, type Quality } from "./music.ts";
+import { CHORDS, MAJOR_KEYS, MINOR_KEYS, diatonicChords, makeChord, pitchClass, spell, type Chord, type Mode, type Quality, type ToneRole } from "./music.ts";
 
 const byNumber = (a: number, b: number) => a - b;
 
@@ -60,7 +60,7 @@ export function parseKeySlug(slug: string): KeyRef | undefined { return allKeys(
 
 // ----------------------------------------------------------- inversions
 
-export type Inversion = { index: number; label: string; bass: string; names: string[]; midi: number[] };
+export type Inversion = { index: number; label: string; bass: string; names: string[]; roles: ToneRole[]; midi: number[] };
 const INVERSION_LABELS = ["Root position", "1st inversion", "2nd inversion", "3rd inversion"];
 
 /**
@@ -71,7 +71,9 @@ const INVERSION_LABELS = ["Root position", "1st inversion", "2nd inversion", "3r
 export function inversions(chord: Chord, baseOctave = 4): Inversion[] {
   const count = Math.min(chord.notes.length, 4);
   return Array.from({ length: count }, (_, index) => {
-    const names = [...chord.notes.slice(index, count), ...chord.notes.slice(0, index), ...chord.notes.slice(count)];
+    const rotate = <T,>(items: T[]) => [...items.slice(index, count), ...items.slice(0, index), ...items.slice(count)];
+    const names = rotate(chord.notes);
+    const roles = rotate(chord.roles);
     const midi: number[] = [];
     names.forEach((name, i) => {
       if (i === 0) { midi.push(12 * (baseOctave + 1) + pitchClass(name)); return; }
@@ -79,7 +81,7 @@ export function inversions(chord: Chord, baseOctave = 4): Inversion[] {
       while (next % 12 !== pitchClass(name)) next++;
       midi.push(next);
     });
-    return { index, label: INVERSION_LABELS[index], bass: names[0], names, midi };
+    return { index, label: INVERSION_LABELS[index], bass: names[0], names, roles, midi };
   });
 }
 
@@ -200,4 +202,27 @@ export function smoothInversions(chords: Chord[]): SmoothStep[] {
 
 export function totalMovement(steps: { midi: number[] }[]): number {
   return steps.slice(1).reduce((sum, step, i) => sum + movement(steps[i].midi, step.midi), 0);
+}
+
+// ------------------------------------------------------------ page helpers
+
+/** Qualities that get a chord page at launch. Everything else stays unpublished until it has unique content. */
+export const LAUNCH_QUALITIES: Quality[] = ["major", "minor"];
+export function isLaunchChord(chord: Chord): boolean { return LAUNCH_QUALITIES.includes(chord.quality); }
+
+/** The canonically spelled chord that owns the page for this chord (A♯ major -> B♭ major). */
+export function pageChordFor(chord: Chord): Chord {
+  return makeChord(canonicalRoot(pitchClass(chord.root), chord.quality), chord.quality);
+}
+
+const ALIAS_ROOTS: Record<string, string> = { "D♭": "C♯", "C♯": "D♭", "E♭": "D♯", "F♯": "G♭", "A♭": "G♯", "G♯": "A♭", "B♭": "A♯" };
+/** Other common name for the same chord, e.g. D♭ major -> "C♯ major". Undefined for natural roots. */
+export function enharmonicAlias(chord: Chord): string | undefined {
+  const alt = ALIAS_ROOTS[chord.root];
+  return alt ? `${alt}${CHORDS[chord.quality].suffix}` : undefined;
+}
+
+/** Plain-text description of a chord voicing for alt text and screen readers. */
+export function chordAltText(chord: Chord, inversion: Inversion): string {
+  return `${chord.fullName}, ${inversion.label.toLowerCase()}: ${inversion.names.join(", ")} (lowest note ${inversion.bass}) on a piano keyboard`;
 }

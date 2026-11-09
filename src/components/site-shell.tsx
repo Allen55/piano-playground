@@ -8,6 +8,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="site-header-inner">
           <Link href="/" className="site-brand">{SITE_NAME}<span>.</span></Link>
           <nav className="site-nav" aria-label="Main">
+            <Link href="/keys/">Keys</Link>
             <Link href="/chords/">Chords</Link>
             <Link href="/studio/">Studio</Link>
           </nav>

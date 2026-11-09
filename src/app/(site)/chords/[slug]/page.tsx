@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import { ChordExplorer } from "@/components/chord-explorer";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { CHORDS, type Chord } from "@/lib/music";
+import { keyName } from "@/lib/keys";
 import { SITE_URL } from "@/lib/site";
-import { chordAltText, chordPages, chordSlug, enharmonicAlias, inversions, isLaunchChord, keysContaining, LAUNCH_QUALITIES, pageChordFor, parseChordSlug, relatedChords } from "@/lib/reference";
+import { chordAltText, chordPages, chordSlug, enharmonicAlias, inversions, isLaunchChord, keySlug, keysContaining, LAUNCH_QUALITIES, pageChordFor, parseChordSlug, relatedChords } from "@/lib/reference";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return chordPages(LAUNCH_QUALITIES).map(c => ({ slug: chordSlug(c) })); }
@@ -69,7 +70,7 @@ export default async function ChordPage({ params }: { params: Promise<{ slug: st
       <p>{chord.symbol} is a diatonic triad in these keys, shown with its Roman numeral.</p>
       <table className="data-table">
         <thead><tr><th>Key</th><th>Numeral</th></tr></thead>
-        <tbody>{keys.map(k => <tr key={`${k.tonic}${k.mode}`}><td>{k.tonic} {k.mode}</td><td>{k.numeral}</td></tr>)}</tbody>
+        <tbody>{keys.map(k => <tr key={`${k.tonic}${k.mode}`}><td><Link href={`/keys/${keySlug(k)}/`}>{keyName(k)}</Link></td><td>{k.numeral}</td></tr>)}</tbody>
       </table>
 
       <h2>Related chords</h2>

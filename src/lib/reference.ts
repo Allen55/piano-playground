@@ -89,6 +89,15 @@ export function inversions(chord: Chord, baseOctave = 4): Inversion[] {
 
 export type KeyMembership = { tonic: string; mode: Mode; numeral: string; sevenths: boolean };
 
+/** Roman numeral with the seventh-chord suffix: I -> Imaj7, V -> V7, vii° -> viiø7, ii -> ii7. Triads are returned unchanged. */
+export function seventhNumeral(numeral: string, quality: Quality): string {
+  if (quality === "maj7") return `${numeral}maj7`;
+  if (quality === "halfDim7") return `${numeral.replace("°", "")}ø7`;
+  if (quality === "dim7") return `${numeral.replace("°", "")}°7`;
+  if (quality === "dom7" || quality === "min7") return `${numeral}7`;
+  return numeral;
+}
+
 /** Every major and natural-minor key in which this chord is diatonic, with its Roman numeral. */
 export function keysContaining(chord: Chord): KeyMembership[] {
   const found: KeyMembership[] = [];
@@ -152,16 +161,37 @@ export function relatedChords(chord: Chord): RelatedChord[] {
       add("Major triad", chord.root, "major");
       add("Dominant seventh", chord.root, "dom7");
       add("Minor seventh", chord.root, "min7");
+      add("Relative minor seventh", spell(chord.root, 6, 9), "min7");
       break;
     case "dom7":
       add("Major triad", chord.root, "major");
+      add("Resolves to", spell(chord.root, 4, 5), "major");
+      add("Resolves to", spell(chord.root, 4, 5), "minor");
       add("Major seventh", chord.root, "maj7");
       add("Minor seventh", chord.root, "min7");
+      add("Suspended fourth seventh", chord.root, "dom7sus4");
       break;
     case "min7":
       add("Minor triad", chord.root, "minor");
+      add("Relative major seventh", spell(chord.root, 3, 3), "maj7");
       add("Dominant seventh", chord.root, "dom7");
       add("Major seventh", chord.root, "maj7");
+      add("Half-diminished seventh", chord.root, "halfDim7");
+      break;
+    case "halfDim7":
+      add("Diminished triad", chord.root, "diminished");
+      add("Diminished seventh", chord.root, "dim7");
+      add("Minor seventh", chord.root, "min7");
+      add("Leads to (ii–V)", spell(chord.root, 4, 5), "dom7");
+      break;
+    case "dim7":
+      add("Diminished triad", chord.root, "diminished");
+      add("Half-diminished seventh", chord.root, "halfDim7");
+      add("Same notes", canonicalRoot(pitchClass(chord.root) + 3, "dim7"), "dim7");
+      add("Same notes", canonicalRoot(pitchClass(chord.root) + 6, "dim7"), "dim7");
+      add("Same notes", canonicalRoot(pitchClass(chord.root) + 9, "dim7"), "dim7");
+      add("Resolves to", spell(chord.root, 2, 1), "major");
+      add("Resolves to", spell(chord.root, 2, 1), "minor");
       break;
   }
   return related;
@@ -231,12 +261,20 @@ export function totalMovement(steps: { midi: number[] }[]): number {
 // ------------------------------------------------------------ page helpers
 
 /** Qualities that get a chord page at launch. Everything else stays unpublished until it has unique content. */
-export const LAUNCH_QUALITIES: Quality[] = ["major", "minor", "diminished", "augmented", "sus2", "sus4"];
+export const LAUNCH_QUALITIES: Quality[] = ["major", "minor", "diminished", "augmented", "sus2", "sus4", "dom7", "maj7", "min7", "halfDim7", "dim7"];
+/** Four-note qualities whose key memberships come from the seventh-chord set of each key. */
+export const SEVENTH_QUALITIES: Quality[] = ["dom7", "maj7", "min7", "halfDim7", "dim7"];
 export function isLaunchChord(chord: Chord): boolean { return LAUNCH_QUALITIES.includes(chord.quality); }
 
 /** The canonically spelled chord that owns the page for this chord (A♯ major -> B♭ major). */
 export function pageChordFor(chord: Chord): Chord {
   return makeChord(canonicalRoot(pitchClass(chord.root), chord.quality), chord.quality);
+}
+
+/** The chord page URL for any spelling of a chord, or undefined if that page is not published. */
+export function chordHref(chord: Chord): string | undefined {
+  const page = pageChordFor(chord);
+  return isLaunchChord(page) ? `/chords/${chordSlug(page)}/` : undefined;
 }
 
 const ALIAS_ROOTS: Record<string, string> = { "D♭": "C♯", "C♯": "D♭", "E♭": "D♯", "F♯": "G♭", "A♭": "G♯", "G♯": "A♭", "B♭": "A♯" };
@@ -255,6 +293,7 @@ export function chordAltText(chord: Chord, inversion: Inversion): string {
 const SYMBOL_SUFFIXES: Partial<Record<Quality, string[]>> = {
   major: ["", "M", "maj"], minor: ["m", "min", "−"], diminished: ["dim", "°", "m♭5"], augmented: ["+", "aug", "(♯5)"],
   sus2: ["sus2", "2"], sus4: ["sus4", "sus"],
+  dom7: ["7", "dom7"], maj7: ["maj7", "M7", "Δ7"], min7: ["m7", "min7", "−7"], halfDim7: ["m7♭5", "ø7", "ø"], dim7: ["dim7", "°7"],
 };
 export function symbolAliases(chord: Chord): string[] {
   return (SYMBOL_SUFFIXES[chord.quality] ?? [CHORDS[chord.quality].suffix]).map(s => chord.root + s);
@@ -284,6 +323,11 @@ export function keysWithAllNotes(chord: Chord): ScaleFit[] {
     if (!pitches.every(p => scale.includes(p))) return [];
     return [{ ...key, numeral: DEGREE_NUMERALS[scale.indexOf(pitches[0])] + CHORDS[chord.quality].suffix }];
   });
+}
+
+/** The harmonic minor key in which a diminished seventh is vii°7 (Bdim7 is vii°7 in C harmonic minor). */
+export function dimSeventhHome(chord: Chord): string {
+  return MINOR_KEYS.find(k => pitchClass(k) === (pitchClass(chord.root) + 1) % 12)!;
 }
 
 /** The harmonic minor key in which an augmented triad is the III+ chord (C+ is III+ in A harmonic minor). */

@@ -1,6 +1,6 @@
 // Progression builder state: parsing typed progressions, the shareable URL, and the strip it produces.
 import { diatonicChords, type Chord } from "./music.ts";
-import { inversions, keySlug, parseKeySlug, smoothInversions, type KeyRef } from "./reference.ts";
+import { inversions, keySlug, parseKeySlug, seventhNumeral, smoothInversions, type KeyRef } from "./reference.ts";
 import type { StripStep } from "./progressions.ts";
 
 /** "smooth" picks the closest inversion for every chord; an array fixes each chord's inversion (0 = root position). */
@@ -32,10 +32,7 @@ export const formatDegrees = (degrees: number[]): string => degrees.join("-");
 /** Roman numeral for a degree in a key, with the seventh-chord suffix when sevenths are on (Imaj7, ii7, V7, viiø7). */
 export function builderNumeral(key: KeyRef, degree: number, sevenths: boolean): string {
   const { numeral, chord } = diatonicChords(key.tonic, key.mode, sevenths)[degree - 1];
-  if (!sevenths) return numeral;
-  if (chord.quality === "maj7") return `${numeral}maj7`;
-  if (chord.quality === "halfDim7") return `${numeral.replace("°", "")}ø7`;
-  return `${numeral}7`;
+  return sevenths ? seventhNumeral(numeral, chord.quality) : numeral;
 }
 
 export function builderChords(state: BuilderState): Chord[] {

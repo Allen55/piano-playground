@@ -32,7 +32,7 @@ export default function HomePage() {
           return <Link key={chordSlug(chord)} href={`/chords/${chordSlug(chord)}/`}>{chord.symbol}</Link>;
         })}
       </div>
-      <p style={{ marginTop: 12 }}><Link href="/chords/">Full chord chart with inversions</Link>, covering all {bySlug.size} major, minor, diminished, augmented and suspended chords.</p>
+      <p style={{ marginTop: 12 }}><Link href="/chords/">Full chord chart with inversions</Link>, covering all {bySlug.size} major, minor, diminished, augmented, suspended and seventh chords.</p>
 
       <h2>Chord progressions</h2>
       <p>See a progression such as I-V-vi-IV laid out chord by chord in any key, with inversions. <Link href="/progressions/">All progressions</Link> or <Link href="/progressions/builder/">build your own</Link>.</p>

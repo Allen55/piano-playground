@@ -6,7 +6,7 @@ import { ChordMap } from "@/components/chord-map";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { diatonicChords, keyInfo, type Mode } from "@/lib/music";
 import { SITE_URL } from "@/lib/site";
-import { allKeys, chordSlug, isLaunchChord, keySlug, pageChordFor, parseKeySlug } from "@/lib/reference";
+import { allKeys, chordHref, chordSlug, isLaunchChord, keySlug, pageChordFor, parseKeySlug } from "@/lib/reference";
 import { keyName, parallelKey, relativeKey, scaleMidi } from "@/lib/keys";
 
 export const dynamicParams = false;
@@ -70,7 +70,7 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
                 <td>{t.numeral}</td>
                 <td>{isLaunchChord(page) ? <Link href={`/chords/${chordSlug(page)}/`}>{t.chord.symbol}</Link> : t.chord.symbol}</td>
                 <td>{t.chord.notes.join(" ")}</td>
-                <td>{sevenths[i].chord.symbol} ({sevenths[i].chord.notes.join(" ")})</td>
+                <td>{chordHref(sevenths[i].chord) ? <Link href={chordHref(sevenths[i].chord)!}>{sevenths[i].chord.symbol}</Link> : sevenths[i].chord.symbol} ({sevenths[i].chord.notes.join(" ")})</td>
               </tr>
             );
           })}
@@ -83,7 +83,7 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
       <p>Triads on the left, the matching seventh chords on the right. Use the buttons on each chord to switch inversion.</p>
       <ChordMap rows={triads.map((t, i) => {
         const page = pageChordFor(t.chord);
-        return { numeral: t.numeral, triad: t.chord, seventh: sevenths[i].chord, triadHref: isLaunchChord(page) ? `/chords/${chordSlug(page)}/` : undefined };
+        return { numeral: t.numeral, triad: t.chord, seventh: sevenths[i].chord, triadHref: isLaunchChord(page) ? `/chords/${chordSlug(page)}/` : undefined, seventhHref: chordHref(sevenths[i].chord) };
       })} />
     </>
   );

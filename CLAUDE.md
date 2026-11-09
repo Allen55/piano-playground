@@ -14,7 +14,7 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
   - `builder.ts` — progression builder state: typed-progression parsing and the shareable URL (`?key=g-major&p=1-5-6-4&chords=sevenths&inv=smooth`). The Studio reads the same query to import a progression.
   - `site-paths.ts` — every indexable path; feeds `sitemap.ts`. Add new public routes here.
   - `audio.ts`, `samples.ts` — Tone.js playback and the Salamander piano samples (CC BY 3.0, credited on About).
-- `src/components/` — shared UI. `keyboard-svg.tsx` draws diagrams; `instrument-toggle.tsx` is the Synth/Piano switch.
+- `src/components/` — shared UI. `keyboard-svg.tsx` draws diagrams (pages with hundreds of diagrams, like the chart, render `<KeyboardDefs />` once and pass `shared` so each diagram draws only its pressed keys); `instrument-toggle.tsx` is the Synth/Piano switch.
 - `tests/*.test.mjs` — `node:test` suites that import the engine `.ts` files directly.
 
 ## Conventions
@@ -33,6 +33,5 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 ## Roadmap
 
 - Printable cheat sheets in Letter and A4
-- Seventh-chord polish
 - FAQ and theory sections
 - Synth/Piano toggle in the Studio

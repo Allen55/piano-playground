@@ -15,17 +15,38 @@ type Props = {
   label: string;
   showLabels?: boolean;
   className?: string;
+  /** Reuse the plain keyboard from <KeyboardDefs> on the same page and draw only the pressed keys. For pages with hundreds of diagrams. */
+  shared?: boolean;
 };
 
-export function KeyboardSvg({ notes, start = 60, end = 83, label, showLabels = true, className }: Props) {
+const WHITE = "#e6ecee", BLACK = "#1d272c";
+const defId = (start: number, end: number, black: boolean) => `kb-${start}-${end}-${black ? "b" : "w"}`;
+const keyRect = (key: { x: number; width: number; height: number; black: boolean }, fill: string) => (
+  <rect x={key.x} y={0} width={key.width} height={key.height} rx={3} fill={fill} stroke={key.black ? "#0f1619" : "#8e9da3"} strokeWidth={1} />
+);
+
+/** The unpressed keyboard, drawn once per page for every `shared` diagram with the same range. */
+export function KeyboardDefs({ start = 60, end = 83 }: { start?: number; end?: number }) {
+  const layout = keyboardLayout(start, end);
+  return (
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
+      <defs>
+        <g id={defId(start, end, false)}>{layout.keys.filter(k => !k.black).map(k => <g key={k.midi}>{keyRect(k, WHITE)}</g>)}</g>
+        <g id={defId(start, end, true)}>{layout.keys.filter(k => k.black).map(k => <g key={k.midi}>{keyRect(k, BLACK)}</g>)}</g>
+      </defs>
+    </svg>
+  );
+}
+
+export function KeyboardSvg({ notes, start = 60, end = 83, label, showLabels = true, className, shared = false }: Props) {
   const layout = keyboardLayout(start, end);
   const pressed = new Map(notes.map(n => [n.midi, n]));
   const draw = (key: (typeof layout.keys)[number]) => {
     const note = pressed.get(key.midi);
-    const fill = note ? ROLE_FILL[note.role ?? "root"] : key.black ? "#1d272c" : "#e6ecee";
+    const fill = note ? ROLE_FILL[note.role ?? "root"] : key.black ? BLACK : WHITE;
     return (
       <g key={key.midi}>
-        <rect x={key.x} y={0} width={key.width} height={key.height} rx={3} fill={fill} stroke={key.black ? "#0f1619" : "#8e9da3"} strokeWidth={1} />
+        {keyRect(key, fill)}
         {showLabels && note?.label && (
           <text x={key.x + key.width / 2} y={key.height - 8} textAnchor="middle" fontSize={key.black ? 9 : 11} fontWeight={600} fill={key.black ? "#10181b" : "#1c2529"}>{note.label}</text>
         )}
@@ -35,8 +56,19 @@ export function KeyboardSvg({ notes, start = 60, end = 83, label, showLabels = t
   return (
     <svg className={className} viewBox={`-1 -1 ${layout.width + 2} ${layout.height + 2}`} role="img" aria-label={label} width="100%" style={{ maxWidth: layout.width * 1.6, display: "block" }}>
       <title>{label}</title>
-      {layout.keys.filter(k => !k.black).map(draw)}
-      {layout.keys.filter(k => k.black).map(draw)}
+      {shared ? (
+        <>
+          <use href={`#${defId(start, end, false)}`} />
+          {layout.keys.filter(k => !k.black && pressed.has(k.midi)).map(draw)}
+          <use href={`#${defId(start, end, true)}`} />
+          {layout.keys.filter(k => k.black && pressed.has(k.midi)).map(draw)}
+        </>
+      ) : (
+        <>
+          {layout.keys.filter(k => !k.black).map(draw)}
+          {layout.keys.filter(k => k.black).map(draw)}
+        </>
+      )}
     </svg>
   );
 }

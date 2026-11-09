@@ -9,7 +9,7 @@ import { playNotes } from "@/lib/audio";
 import type { Chord } from "@/lib/music";
 import { chordAltText, inversions } from "@/lib/reference";
 
-export type ChordMapRow = { numeral: string; triad: Chord; seventh: Chord; triadHref?: string };
+export type ChordMapRow = { numeral: string; triad: Chord; seventh: Chord; triadHref?: string; seventhHref?: string };
 
 const SHORT = ["Root", "1st", "2nd", "3rd"];
 
@@ -43,7 +43,7 @@ export function ChordMap({ rows }: { rows: ChordMapRow[] }) {
       {rows.map(row => (
         <div className="map-row" key={row.numeral}>
           <ChordCell chord={row.triad} href={row.triadHref} caption={`${row.numeral} · ${row.triad.fullName}`} />
-          <ChordCell chord={row.seventh} caption={`${row.numeral} · ${row.seventh.fullName}`} />
+          <ChordCell chord={row.seventh} href={row.seventhHref} caption={`${row.numeral} · ${row.seventh.fullName}`} />
         </div>
       ))}
     </div>

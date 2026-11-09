@@ -93,5 +93,5 @@ test("inversions carry matching roles and page helpers canonicalise", async () =
   assert.equal(enharmonicAlias(makeChord("D♭", "major")), "C♯");
   assert.equal(enharmonicAlias(makeChord("C", "major")), undefined);
   assert.ok(chordAltText(makeChord("C", "major"), inv).includes("1st inversion"));
-  assert.ok(isLaunchChord(makeChord("C", "minor")) && !isLaunchChord(makeChord("C", "maj7")));
+  assert.ok(isLaunchChord(makeChord("C", "minor")) && !isLaunchChord(makeChord("C", "maj9")));
 });

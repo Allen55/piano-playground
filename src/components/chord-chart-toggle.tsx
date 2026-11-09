@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const OPTIONS = ["Root position", "1st inversion", "2nd inversion"];
+const OPTIONS = ["Root position", "1st inversion", "2nd inversion", "3rd inversion (sevenths)"];
 
 // Every inversion is in the server-rendered HTML; this only switches which one is visible (see chart.css).
 export function ChordChartToggle({ children }: { children: React.ReactNode }) {

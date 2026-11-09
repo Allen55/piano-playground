@@ -7,7 +7,7 @@ import { KeyboardSvg } from "@/components/keyboard-svg";
 import { CHORDS, makeChord, spell, type Chord } from "@/lib/music";
 import { keyName } from "@/lib/keys";
 import { SITE_URL } from "@/lib/site";
-import { STEP_NAMES, chordAltText, chordPages, chordSlug, enharmonicAlias, harmonicMinorHome, inversions, isLaunchChord, keySlug, keyboardName, keysContaining, keysWithAllNotes, LAUNCH_QUALITIES, pageChordFor, parseChordSlug, relatedChords, symbolAliases, type RelatedChord } from "@/lib/reference";
+import { SEVENTH_QUALITIES, STEP_NAMES, chordAltText, dimSeventhHome, seventhNumeral, chordPages, chordSlug, enharmonicAlias, harmonicMinorHome, inversions, isLaunchChord, keySlug, keyboardName, keysContaining, keysWithAllNotes, LAUNCH_QUALITIES, pageChordFor, parseChordSlug, relatedChords, symbolAliases, type RelatedChord } from "@/lib/reference";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return chordPages(LAUNCH_QUALITIES).map(c => ({ slug: chordSlug(c) })); }
@@ -19,10 +19,11 @@ function lookup(slug: string): Chord {
 }
 
 const isSus = (chord: Chord) => chord.quality === "sus2" || chord.quality === "sus4";
+const isSeventh = (chord: Chord) => SEVENTH_QUALITIES.includes(chord.quality);
 /** Prose name: "C major", "C diminished", "C suspended second". */
 const longName = (chord: Chord) => `${chord.root} ${CHORDS[chord.quality].name.toLowerCase()}`;
-/** Heading name: sus chords are searched by symbol (Csus4), the rest by name (C Diminished). */
-const headName = (chord: Chord) => (isSus(chord) ? chord.symbol : chord.fullName);
+/** Heading name: sus and seventh chords are searched by symbol (Csus4, Cmaj7), triads by name (C Diminished). */
+const headName = (chord: Chord) => (isSus(chord) || isSeventh(chord) ? chord.symbol : chord.fullName);
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const chord = lookup((await params).slug);
@@ -69,7 +70,36 @@ function buildNotes(chord: Chord, related: RelatedChord[]): string[] {
       if (same.length) lines.push(`${chord.symbol} uses the same notes as ${same[0]}.`);
       break;
   }
+  if (isSeventh(chord)) lines.push(...seventhNotes(chord, same));
   lines.push("An inversion changes which note is in the bass, not the name of the chord.");
+  return lines;
+}
+
+const BASE_TRIAD: Partial<Record<Chord["quality"], Chord["quality"]>> = { maj7: "major", dom7: "major", min7: "minor", halfDim7: "diminished", dim7: "diminished" };
+const SEVENTH_SIZE: Partial<Record<Chord["quality"], string>> = { maj7: "major seventh (11 semitones)", dom7: "minor seventh (10 semitones)", min7: "minor seventh (10 semitones)", halfDim7: "minor seventh (10 semitones)", dim7: "diminished seventh (9 semitones)" };
+
+function seventhNotes(chord: Chord, same: string[]): string[] {
+  const [root, third, , seventh] = chord.notes;
+  const triad = makeChord(root, BASE_TRIAD[chord.quality]!);
+  const lines = [`It is the ${triad.symbol} triad (${triad.notes.join(", ")}) with a ${SEVENTH_SIZE[chord.quality]} added on top: ${withKey(seventh)}.`];
+  const target = makeChord(spell(root, 4, 5), "major");
+  switch (chord.quality) {
+    case "maj7": lines.push(`The seventh, ${seventh}, is a half step below the next ${root} up.`); break;
+    case "dom7":
+      lines.push(`${chord.symbol} is the V7 chord in ${target.root} major and usually resolves to ${target.symbol} or ${target.root}m. ${third} and ${seventh} are a tritone apart; in the resolution to ${target.symbol}, ${third} rises a half step to ${target.root} and ${seventh} falls a half step to ${target.notes[1]}.`);
+      break;
+    case "min7": {
+      const relative = spell(root, 3, 3);
+      lines.push(`${chord.symbol} contains the same notes as ${relative}6 (${relative}, ${chord.notes[2]}, ${seventh}, ${root}); the bass note decides which name is used.`);
+      break;
+    }
+    case "halfDim7":
+      lines.push(`It is also written ${root}ø7. It is the viiø7 chord in major keys and the iiø7 chord in minor keys, where it usually leads to ${makeChord(target.root, "dom7").symbol}.`);
+      break;
+    case "dim7":
+      lines.push(`Every interval is a minor third, so the four notes divide the octave evenly and ${chord.symbol}, ${same.join(", ")} are played on the same four keys.`);
+      break;
+  }
   return lines;
 }
 
@@ -77,23 +107,36 @@ function inversionNote(chord: Chord, related: RelatedChord[]): string | undefine
   const same = related.filter(r => r.relation === "Same notes").map(r => pageChordFor(r.chord));
   const invs = inversions(chord);
   if (chord.quality === "augmented") return `Because the notes are evenly spaced, every inversion of ${chord.symbol} has the same shape under the hand: the 1st inversion is played on the same keys as ${same[0].symbol} and the 2nd inversion on the same keys as ${same[1].symbol}.`;
+  if (chord.quality === "dim7") return `Because the notes are evenly spaced, each inversion is played on the same keys as another diminished seventh: the 1st inversion as ${same[0].symbol}, the 2nd as ${same[1].symbol} and the 3rd as ${same[2].symbol}.`;
+  if (isSeventh(chord)) return `Seventh chords have a 3rd inversion too, with the seventh, ${chord.notes[3]}, in the bass.`;
   if (chord.quality === "sus2" && same[0]) return `The 2nd inversion (${invs[2].names.join(", ")}) is ${same[0].symbol} in root position.`;
   if (chord.quality === "sus4" && same[0]) return `The 1st inversion (${invs[1].names.join(", ")}) is ${same[0].symbol} in root position.`;
   return undefined;
 }
 
 function KeysSection({ chord }: { chord: Chord }) {
-  const keys = keysContaining(chord).filter(k => !k.sevenths);
+  const seventh = isSeventh(chord);
+  const keys = keysContaining(chord).filter(k => k.sevenths === seventh);
   if (keys.length) {
     const resolve = chord.quality === "diminished" ? makeChord(spell(chord.root, 2, 1), "major") : undefined;
     return (
       <>
         <h2>Keys that contain {chord.symbol}</h2>
-        <p>{chord.symbol} is a diatonic triad in these keys, shown with its Roman numeral.{resolve ? ` As vii° in a major key it usually leads to ${resolve.symbol}, a half step above its root.` : ""}</p>
+        <p>{chord.symbol} is a diatonic {seventh ? "seventh chord" : "triad"} in these keys, shown with its Roman numeral.{resolve ? ` As vii° in a major key it usually leads to ${resolve.symbol}, a half step above its root.` : ""}</p>
         <table className="data-table">
           <thead><tr><th>Key</th><th>Numeral</th></tr></thead>
-          <tbody>{keys.map(k => <tr key={`${k.tonic}${k.mode}`}><td><Link href={`/keys/${keySlug(k)}/`}>{keyName(k)}</Link></td><td>{k.numeral}</td></tr>)}</tbody>
+          <tbody>{keys.map(k => <tr key={`${k.tonic}${k.mode}`}><td><Link href={`/keys/${keySlug(k)}/`}>{keyName(k)}</Link></td><td>{seventh ? seventhNumeral(k.numeral, chord.quality) : k.numeral}</td></tr>)}</tbody>
         </table>
+      </>
+    );
+  }
+  if (chord.quality === "dim7") {
+    const home = dimSeventhHome(chord);
+    const spelled = makeChord(spell(home, 7, 11), "dim7");
+    return (
+      <>
+        <h2>Where {chord.symbol} comes from</h2>
+        <p>{chord.symbol} is not one of the seventh chords of any major or natural minor key. It comes from the harmonic minor scale, where it is the vii°7 chord: {chord.symbol} is vii°7 in {home} harmonic minor{spelled.root !== chord.root ? `, where it is spelled ${spelled.symbol}` : ""}. It usually resolves up a half step, to {home} or {home}m.</p>
       </>
     );
   }

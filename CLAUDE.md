@@ -34,3 +34,4 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 
 - Printable cheat sheets in Letter and A4
 - FAQ and theory sections
+- Jazz and blues progressions (after the two items above). Candidates: jazz ii7–V7–Imaj7, minor iiø7–V7–i, I–vi–ii–V turnaround, iii–vi–ii–V; blues 12-bar (I7–IV7–V7), quick-change 12-bar, minor blues. Needs `progressions.ts` to support a chord quality per step (dominant sevenths on I and IV aren't diatonic, and minor V7 comes from harmonic minor) and progressions longer than one row. Add mood/style tags so `/progressions/` can be indexed by style.

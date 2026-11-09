@@ -34,4 +34,3 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 
 - Printable cheat sheets in Letter and A4
 - FAQ and theory sections
-- Synth/Piano toggle in the Studio

@@ -7,4 +7,4 @@
 .chart-card{border:1px solid #2c373d;background:#171e22;border-radius:8px;padding:12px}
 .chart-card h3{font-size:18px;margin:0}
 .chart-card .chart-notes{font-size:14px;color:#a9bac2;margin:0 0 8px}
-@media print{.site-header,.site-footer,.chart-tabs{display:none}.site,.site-main{background:#fff;color:#000}.chart-card{break-inside:avoid;border-color:#999;background:#fff}.chart[data-inv] .chart-inv-1,.chart[data-inv] .chart-inv-2,.chart[data-inv] .chart-inv-3,.chart[data-inv] .chart-no-3{display:none}.chart[data-inv] .chart-inv-0{display:block}.site h1,.site h2,.site h3,.site p{color:#000!important}}
+@media print{.site-header,.site-footer,.chart-tabs{display:none}.chart-card a,.chart-card h3 span{color:#000!important}.site,.site-main{background:#fff;color:#000}.chart-card{break-inside:avoid;border-color:#999;background:#fff}.site h1,.site h2,.site h3,.site p{color:#000!important}}

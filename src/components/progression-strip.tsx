@@ -2,13 +2,13 @@
 
 import "./progression.css";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InstrumentToggle } from "@/components/instrument-toggle";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { useStripPlayer } from "@/components/use-strip-player";
 import { builderHref, studioHref, type BuilderState } from "@/lib/builder";
-import { builderChordType, defaultTonic, getProgression, keysFor, progressionChords, stripSteps, voiceLeadingText, type InversionMode } from "@/lib/progressions";
-import { chordAltText } from "@/lib/reference";
+import { builderChordType, defaultTonic, tonicFromQuery, getProgression, keysFor, progressionChords, stripSteps, voiceLeadingText, type InversionMode } from "@/lib/progressions";
+import { chordAltText, keySlug } from "@/lib/reference";
 
 const MODES: [InversionMode, string][] = [["root", "Root position"], ["first", "1st inversion"], ["second", "2nd inversion"], ["smooth", "Smooth"]];
 
@@ -18,6 +18,8 @@ export function ProgressionStrip({ slug }: { slug: string }) {
   const [tonic, setTonic] = useState(defaultTonic(progression.mode));
   const [mode, setMode] = useState<InversionMode>("smooth");
   const [bpm, setBpm] = useState(90);
+  // Links from chord pages and key hubs open the page in their key (?key=g-major). Applied after hydration.
+  useEffect(() => { const linked = tonicFromQuery(progression, window.location.search); if (linked) setTonic(linked); }, [progression]);
 
   const chords = progressionChords(progression, tonic);
   const steps = stripSteps(chords, mode);
@@ -60,6 +62,7 @@ export function ProgressionStrip({ slug }: { slug: string }) {
       <p className="strip-links">
         {chordType && <Link href={builderHref(handoff)}>Edit in the progression builder</Link>}
         <Link href={studioHref(handoff, chordType ? undefined : progression.qualities)}>Open in Studio</Link>
+        <Link href={`/print/progressions/${progression.slug}/?key=${keySlug({ tonic, mode: progression.mode })}&inv=${mode}`}>Print or save as PDF</Link>
       </p>
     </div>
   );

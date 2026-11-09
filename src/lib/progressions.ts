@@ -1,6 +1,6 @@
 // Roman-numeral progressions as data. Chords, keys and voice leading are computed from the music engine.
 import { MAJOR_KEYS, MINOR_KEYS, diatonicChords, keyInfo, makeChord, pitchClass, type Chord, type Mode, type Quality } from "./music.ts";
-import { inversions, seventhNumeral, smoothInversions, voiceMoves, type Inversion } from "./reference.ts";
+import { inversions, keySlug, parseKeySlug, seventhNumeral, smoothInversions, voiceMoves, type Inversion } from "./reference.ts";
 
 export type Style = "pop" | "jazz" | "blues";
 export const STYLES: { id: Style; label: string; blurb: string }[] = [
@@ -76,6 +76,32 @@ export function getProgression(slug: string): Progression | undefined { return P
 export function progressionChords(progression: Progression, tonic: string): Chord[] {
   const scale = keyInfo(tonic, progression.mode).notes;
   return progression.degrees.map((d, i) => makeChord(scale[d - 1], progression.qualities[i]));
+}
+
+/** Link to a progression page, opened in a given key (?key=g-major). The canonical URL stays the bare page. */
+export function progressionHref(progression: Progression, tonic?: string): string {
+  const base = `/progressions/${progression.slug}/`;
+  return tonic && tonic !== defaultTonic(progression.mode) ? `${base}?key=${keySlug({ tonic, mode: progression.mode })}` : base;
+}
+
+/** The key a progression page should open in, from its ?key= parameter, if it is one of the progression's keys. */
+export function tonicFromQuery(progression: Progression, search: string): string | undefined {
+  const key = parseKeySlug(new URLSearchParams(search).get("key") ?? "");
+  return key && key.mode === progression.mode && keysFor(progression).includes(key.tonic) ? key.tonic : undefined;
+}
+
+export type ProgressionUse = { progression: Progression; uses: { tonic: string; numeral: string }[] };
+
+/** Every progression that contains this chord (same sound and type), with each key it appears in and its numeral there. */
+export function progressionsWithChord(chord: Chord): ProgressionUse[] {
+  const pitch = pitchClass(chord.root);
+  return PROGRESSIONS.flatMap(progression => {
+    const uses = keysFor(progression).flatMap(tonic => {
+      const at = progressionChords(progression, tonic).findIndex(c => c.quality === chord.quality && pitchClass(c.root) === pitch);
+      return at < 0 ? [] : [{ tonic, numeral: progression.numerals[at] }];
+    });
+    return uses.length ? [{ progression, uses }] : [];
+  });
 }
 
 /** Each distinct numeral once, in order of first appearance, with its index in the progression. */

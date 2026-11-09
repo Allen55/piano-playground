@@ -7,6 +7,7 @@ import { KeyboardSvg } from "@/components/keyboard-svg";
 import { CHORDS, makeChord, spell, type Chord } from "@/lib/music";
 import { keyName } from "@/lib/keys";
 import { SITE_URL } from "@/lib/site";
+import { progressionHref, progressionsWithChord } from "@/lib/progressions";
 import { SEVENTH_QUALITIES, STEP_NAMES, chordAltText, dimSeventhHome, seventhNumeral, chordPages, chordSlug, enharmonicAlias, harmonicMinorHome, inversions, isLaunchChord, keySlug, keyboardName, keysContaining, keysWithAllNotes, LAUNCH_QUALITIES, pageChordFor, parseChordSlug, relatedChords, symbolAliases, type RelatedChord } from "@/lib/reference";
 
 export const dynamicParams = false;
@@ -165,6 +166,26 @@ function KeysSection({ chord }: { chord: Chord }) {
   );
 }
 
+function ProgressionsSection({ chord }: { chord: Chord }) {
+  const found = progressionsWithChord(chord);
+  if (!found.length) return null;
+  return (
+    <>
+      <h2>Progressions with {chord.symbol}</h2>
+      <p>Each link opens the progression in that key, with {chord.symbol} in the strip.</p>
+      <ul>
+        {found.map(({ progression, uses }) => (
+          <li key={progression.slug}>
+            <Link href={progressionHref(progression)}><strong>{progression.name}</strong></Link>: {uses.map((u, i) => (
+              <span key={u.tonic}>{i > 0 && ", "}{u.numeral} in <Link href={progressionHref(progression, u.tonic)}>{u.tonic} {progression.mode}</Link></span>
+            ))}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
 export default async function ChordPage({ params }: { params: Promise<{ slug: string }> }) {
   const chord = lookup((await params).slug);
   const invs = inversions(chord);
@@ -215,6 +236,8 @@ export default async function ChordPage({ params }: { params: Promise<{ slug: st
           );
         })}
       </ul>
+
+      <ProgressionsSection chord={chord} />
 
       <h2>How {chord.symbol} is built</h2>
       {buildNotes(chord, related).map((line, n) => <p key={n}>{line}</p>)}

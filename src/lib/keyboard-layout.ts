@@ -18,3 +18,16 @@ export function keyboardLayout(start = 60, end = 83, whiteWidth = 24, whiteHeigh
   }
   return { keys, width: whites * whiteWidth, height: whiteHeight, whiteCount: whites };
 }
+
+/**
+ * A tight keyboard window for small diagrams: starts on the white key at or just below the lowest note and spans
+ * `whites` white keys (more if needed to reach the highest note). Every triad or seventh inversion fits in 8.
+ */
+export function fitWindow(midis: number[], whites = 8): { start: number; end: number } {
+  const lowest = Math.min(...midis), highest = Math.max(...midis);
+  const start = isBlackKey(lowest) ? lowest - 1 : lowest;
+  let end = start, count = 1;
+  while (count < whites || end < highest) { end++; if (!isBlackKey(end)) count++; }
+  if (isBlackKey(end)) end++; // never stop on a black key: it would be drawn half outside the diagram
+  return { start, end };
+}

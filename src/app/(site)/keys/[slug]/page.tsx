@@ -6,6 +6,7 @@ import { ChordMap } from "@/components/chord-map";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { diatonicChords, keyInfo, type Mode } from "@/lib/music";
 import { SITE_URL } from "@/lib/site";
+import { PROGRESSIONS, keysFor, progressionChords, progressionHref } from "@/lib/progressions";
 import { allKeys, chordHref, chordSlug, isLaunchChord, keySlug, pageChordFor, parseKeySlug } from "@/lib/reference";
 import { keyName, parallelKey, relativeKey, scaleMidi } from "@/lib/keys";
 
@@ -45,6 +46,7 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
       <p className="crumbs"><Link href="/">Home</Link> / <Link href="/keys/">Keys</Link> / {keyName(key)}</p>
       <h1>{keyName(key)} key</h1>
       <p className="lede">The {keyName(key)} scale has the notes {info.notes.join(", ")}. Key signature: {info.signature}.</p>
+      <p><Link className="play-btn print-btn" href={`/print/keys/${keySlug(key)}/`}>Print or save as PDF</Link> A one-page sheet of every chord in {keyName(key)}, in the inversion you choose.</p>
       <dl className="facts">
         <div className="fact"><dt>Scale</dt><dd style={{ fontSize: 15 }}>{info.notes.join(" ")}</dd></div>
         <div className="fact"><dt>Signature</dt><dd style={{ fontSize: 15 }}>{info.signature}</dd></div>
@@ -85,6 +87,25 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
         const page = pageChordFor(t.chord);
         return { numeral: t.numeral, triad: t.chord, seventh: sevenths[i].chord, triadHref: isLaunchChord(page) ? `/chords/${chordSlug(page)}/` : undefined, seventhHref: chordHref(sevenths[i].chord) };
       })} />
+
+      <h2>Progressions in {keyName(key)}</h2>
+      <p>Common progressions with their chords in {keyName(key)}. Each link opens the progression already set to this key.</p>
+      <table className="data-table">
+        <thead><tr><th>Progression</th><th>Numerals</th><th>In {keyName(key)}</th></tr></thead>
+        <tbody>
+          {PROGRESSIONS.filter(p => p.mode === key.mode && keysFor(p).includes(key.tonic)).map(p => {
+            const chords = progressionChords(p, key.tonic);
+            const distinct = p.barsPerRow ? [...new Map(chords.map(c => [c.symbol, c])).values()] : chords;
+            return (
+              <tr key={p.slug}>
+                <td><Link href={progressionHref(p, key.tonic)}>{p.name}</Link></td>
+                <td>{p.barsPerRow ? [...new Set(p.numerals)].join(", ") : p.numerals.join(" – ")}</td>
+                <td>{distinct.map(c => c.symbol).join(p.barsPerRow ? ", " : " – ")}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </>
   );
 }

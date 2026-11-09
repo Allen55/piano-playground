@@ -2,6 +2,7 @@ import "./chart.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChordChartToggle } from "@/components/chord-chart-toggle";
+import { PrintPageButton } from "@/components/print-page-button";
 import { KeyboardDefs, KeyboardSvg } from "@/components/keyboard-svg";
 import { LAUNCH_QUALITIES, chordAltText, chordPages, chordSlug, inversions } from "@/lib/reference";
 
@@ -18,7 +19,8 @@ export default function ChordsChart() {
   return (
     <>
       <h1>Piano chord chart</h1>
-      <p className="lede">All {chordPages(LAUNCH_QUALITIES).length} chords on the keyboard: major, minor, diminished, augmented, sus2, sus4 and the five common seventh chords. Switch between root position and each inversion; the notes are listed on every card. Use your browser's print command for a one-page-per-section copy.</p>
+      <p className="lede">All {chordPages(LAUNCH_QUALITIES).length} chords on the keyboard: major, minor, diminished, augmented, sus2, sus4 and the five common seventh chords. Switch between root position and each inversion; the notes are listed on every card. Printing gives a light, black-and-white friendly copy of whichever inversion is selected.</p>
+      <p><PrintPageButton label="Print chord chart" /></p>
       <KeyboardDefs />
       <ChordChartToggle>
         {groups.map(([title, quality]) => (

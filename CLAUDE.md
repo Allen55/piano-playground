@@ -5,6 +5,7 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 ## Layout
 
 - `src/app/(site)/` — the public reference site (keys, chords, progressions, about/privacy/contact). Server-rendered pages.
+- `src/app/(print)/print/` — printable key and progression sheets (light theme, Letter/A4 picker, `noindex`, not in the sitemap). Small print diagrams use `SheetDiagram`, which crops to an 8-white-key window (`fitWindow`) so labels stay readable.
 - `src/app/studio/` — the interactive Studio (client component). Keep it separate from the public site: site pages must not import Studio code.
 - `src/lib/` — the pure music engine. No React, no DOM, no audio here.
   - `music.ts` — notes, chords, qualities, voicings, scales, diatonic chords.
@@ -32,5 +33,4 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 
 ## Roadmap
 
-- Printable cheat sheets in Letter and A4
 - FAQ and theory sections

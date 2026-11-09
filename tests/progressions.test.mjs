@@ -59,3 +59,22 @@ test("blues progressions are 12 bars of dominant sevenths", () => {
   const steps = stripSteps(progressionChords(blues, "C"), "smooth");
   assert.equal(voiceLeadingText(steps[0], steps[1]), "same chord, nothing moves");
 });
+
+test("progressions containing a chord, and links that open in a key", async () => {
+  const { progressionsWithChord, progressionHref, tonicFromQuery } = await import("../src/lib/progressions.ts");
+  const { makeChord } = await import("../src/lib/music.ts");
+  const c = progressionsWithChord(makeChord("C", "major"));
+  const first = c.find(u => u.progression.slug === "i-v-vi-iv");
+  assert.deepEqual(first.uses.map(u => `${u.tonic} ${u.numeral}`), ["C I", "G IV", "F V"]);
+  assert.ok(!c.some(u => u.progression.style === "blues"));
+  const c7 = progressionsWithChord(makeChord("C", "dom7"));
+  assert.deepEqual(c7.find(u => u.progression.slug === "12-bar-blues").uses.map(u => `${u.tonic} ${u.numeral}`), ["C I7", "G IV7", "F V7"]);
+  const csharp = progressionsWithChord(makeChord("C♯", "minor"));
+  assert.ok(csharp.some(u => u.uses.some(x => x.tonic === "A" || x.tonic === "C♯")));
+  const p = getProgression("i-v-vi-iv");
+  assert.equal(progressionHref(p, "G"), "/progressions/i-v-vi-iv/?key=g-major");
+  assert.equal(progressionHref(p, "C"), "/progressions/i-v-vi-iv/");
+  assert.equal(tonicFromQuery(p, "?key=g-major"), "G");
+  assert.equal(tonicFromQuery(p, "?key=e-minor"), undefined);
+  assert.equal(tonicFromQuery(getProgression("minor-blues"), "?key=f-sharp-minor"), "F♯");
+});

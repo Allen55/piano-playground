@@ -24,30 +24,32 @@ export type Progression = {
   /** Shown as rows of this many chords (4 for 12-bar forms). */
   barsPerRow?: number;
   about?: string;
+  /** What it sounds like, in a few words, for tables ("Bright and anthemic: the classic pop loop"). */
+  sound: string;
 };
 export type InversionMode = "root" | "first" | "second" | "smooth";
 export type StripStep = { chord: Chord; inversion: Inversion; midi: number[] };
 
 /** A step is a scale degree, optionally with its own quality and numeral (for chords outside the key). */
 type StepDef = number | [degree: number, quality: Quality, numeral: string];
-type Definition = { mode: Mode; style: Style; steps: StepDef[]; sevenths?: boolean; slug?: string; name?: string; beats?: number; barsPerRow?: number; about?: string };
+type Definition = { mode: Mode; style: Style; sound: string; steps: StepDef[]; sevenths?: boolean; slug?: string; name?: string; beats?: number; barsPerRow?: number; about?: string };
 
 const BLUES_ABOUT = "Every chord is a dominant seventh, so the flat seventh of each chord (the blue note) sits outside the major scale. That clash is the sound of the blues.";
 const DEFINITIONS: Definition[] = [
-  { mode: "major", style: "pop", steps: [1, 5, 6, 4] },
-  { mode: "major", style: "pop", steps: [1, 6, 4, 5] },
-  { mode: "major", style: "jazz", steps: [2, 5, 1], sevenths: true, name: "ii-V-I", slug: "ii-v-i", about: "The most common progression in jazz. The seventh of each chord moves down a half step into the next chord, which pulls the ear toward the I chord." },
-  { mode: "major", style: "pop", steps: [1, 4, 5] },
-  { mode: "major", style: "pop", steps: [6, 4, 1, 5] },
-  { mode: "minor", style: "pop", steps: [1, 6, 3, 7] },
-  { mode: "minor", style: "jazz", slug: "minor-ii-v-i", name: "Minor ii-V-i", steps: [[2, "halfDim7", "iiø7"], [5, "dom7", "V7"], [1, "min7", "i7"]], about: "The minor-key ii–V–i. The V7 takes its major third from the harmonic minor scale, a half step below the tonic, so it resolves strongly to i." },
-  { mode: "major", style: "jazz", steps: [1, 6, 2, 5], sevenths: true, name: "I-vi-ii-V", slug: "i-vi-ii-v", about: "The classic turnaround. It cycles back to I, so it loops at the end of a section or behind a whole tune." },
-  { mode: "major", style: "jazz", steps: [3, 6, 2, 5], sevenths: true, name: "iii-vi-ii-V", slug: "iii-vi-ii-v", about: "A longer turnaround: each root falls a fifth to the next, iii to vi to ii to V, before resolving to I." },
-  { mode: "major", style: "blues", slug: "12-bar-blues", name: "12-bar blues", beats: 4, barsPerRow: 4, about: BLUES_ABOUT,
+  { mode: "major", style: "pop", steps: [1, 5, 6, 4], sound: "Bright and anthemic: the classic pop-ballad loop" },
+  { mode: "major", style: "pop", steps: [1, 6, 4, 5], sound: "Sweet and nostalgic: the 1950s doo-wop sound" },
+  { mode: "major", style: "jazz", sound: "Smooth and settled: the cadence of countless jazz standards", steps: [2, 5, 1], sevenths: true, name: "ii-V-I", slug: "ii-v-i", about: "The most common progression in jazz. The seventh of each chord moves down a half step into the next chord, which pulls the ear toward the I chord." },
+  { mode: "major", style: "pop", steps: [1, 4, 5], sound: "Strong and simple: the backbone of rock, folk and country" },
+  { mode: "major", style: "pop", steps: [6, 4, 1, 5], sound: "Emotional: starts in a minor mood and lifts toward major" },
+  { mode: "minor", style: "pop", steps: [1, 6, 3, 7], sound: "Dark and driving: epic minor-key pop and rock" },
+  { mode: "minor", style: "jazz", sound: "Tense and bittersweet: the minor-key jazz cadence", slug: "minor-ii-v-i", name: "Minor ii-V-i", steps: [[2, "halfDim7", "iiø7"], [5, "dom7", "V7"], [1, "min7", "i7"]], about: "The minor-key ii–V–i. The V7 takes its major third from the harmonic minor scale, a half step below the tonic, so it resolves strongly to i." },
+  { mode: "major", style: "jazz", sound: "Easygoing and circular: a turnaround that loops back home", steps: [1, 6, 2, 5], sevenths: true, name: "I-vi-ii-V", slug: "i-vi-ii-v", about: "The classic turnaround. It cycles back to I, so it loops at the end of a section or behind a whole tune." },
+  { mode: "major", style: "jazz", sound: "Rolling and restless: falls by fifths back to the tonic", steps: [3, 6, 2, 5], sevenths: true, name: "iii-vi-ii-V", slug: "iii-vi-ii-v", about: "A longer turnaround: each root falls a fifth to the next, iii to vi to ii to V, before resolving to I." },
+  { mode: "major", style: "blues", sound: "Gritty and laid-back: the foundation of blues and early rock and roll", slug: "12-bar-blues", name: "12-bar blues", beats: 4, barsPerRow: 4, about: BLUES_ABOUT,
     steps: [[1, "dom7", "I7"], [1, "dom7", "I7"], [1, "dom7", "I7"], [1, "dom7", "I7"], [4, "dom7", "IV7"], [4, "dom7", "IV7"], [1, "dom7", "I7"], [1, "dom7", "I7"], [5, "dom7", "V7"], [4, "dom7", "IV7"], [1, "dom7", "I7"], [5, "dom7", "V7"]] },
-  { mode: "major", style: "blues", slug: "quick-change-blues", name: "Quick-change blues", beats: 4, barsPerRow: 4, about: `The 12-bar blues with the IV7 moved into bar 2, so the change comes sooner. ${BLUES_ABOUT}`,
+  { mode: "major", style: "blues", sound: "The same blues groove, with an early lift to IV in bar 2", slug: "quick-change-blues", name: "Quick-change blues", beats: 4, barsPerRow: 4, about: `The 12-bar blues with the IV7 moved into bar 2, so the change comes sooner. ${BLUES_ABOUT}`,
     steps: [[1, "dom7", "I7"], [4, "dom7", "IV7"], [1, "dom7", "I7"], [1, "dom7", "I7"], [4, "dom7", "IV7"], [4, "dom7", "IV7"], [1, "dom7", "I7"], [1, "dom7", "I7"], [5, "dom7", "V7"], [4, "dom7", "IV7"], [1, "dom7", "I7"], [5, "dom7", "V7"]] },
-  { mode: "minor", style: "blues", slug: "minor-blues", name: "Minor blues", beats: 4, barsPerRow: 4, about: "A 12-bar blues on minor seventh chords. In bar 9 the VI7 falls a half step to the V7, whose major third comes from the harmonic minor scale.",
+  { mode: "minor", style: "blues", sound: "Dark and soulful: slow, brooding minor-key blues", slug: "minor-blues", name: "Minor blues", beats: 4, barsPerRow: 4, about: "A 12-bar blues on minor seventh chords. In bar 9 the VI7 falls a half step to the V7, whose major third comes from the harmonic minor scale.",
     steps: [[1, "min7", "i7"], [1, "min7", "i7"], [1, "min7", "i7"], [1, "min7", "i7"], [4, "min7", "iv7"], [4, "min7", "iv7"], [1, "min7", "i7"], [1, "min7", "i7"], [6, "dom7", "VI7"], [5, "dom7", "V7"], [1, "min7", "i7"], [5, "dom7", "V7"]] },
 ];
 
@@ -66,7 +68,7 @@ export const PROGRESSIONS: Progression[] = DEFINITIONS.map(def => {
   return {
     slug: def.slug ?? name.toLowerCase(), name, mode: def.mode, style: def.style,
     degrees: steps.map(s => s.degree), qualities: steps.map(s => s.quality), numerals: steps.map(s => s.numeral),
-    beats: def.beats ?? 2, barsPerRow: def.barsPerRow, about: def.about,
+    beats: def.beats ?? 2, barsPerRow: def.barsPerRow, about: def.about, sound: def.sound,
   };
 });
 

@@ -7,6 +7,7 @@ test("launch progressions have stable names and slugs", () => {
   assert.deepEqual(PROGRESSIONS.map(p => p.slug), ["i-v-vi-iv", "i-vi-iv-v", "ii-v-i", "i-iv-v", "vi-iv-i-v", "i-vi-iii-vii", "minor-ii-v-i", "i-vi-ii-v", "iii-vi-ii-v", "12-bar-blues", "quick-change-blues", "minor-blues"]);
   assert.equal(new Set(PROGRESSIONS.map(p => p.slug)).size, PROGRESSIONS.length);
   assert.ok(PROGRESSIONS.every(p => /^[a-z0-9-]+$/.test(p.slug)));
+  assert.ok(PROGRESSIONS.every(p => p.sound.length > 10));
   assert.equal(getProgression("i-v-vi-iv").numerals.join(" "), "I V vi IV");
 });
 

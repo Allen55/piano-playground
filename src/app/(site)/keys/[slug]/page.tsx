@@ -90,8 +90,9 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
 
       <h2>Progressions in {keyName(key)}</h2>
       <p>Common progressions with their chords in {keyName(key)}. Each link opens the progression already set to this key.</p>
+      <div className="table-scroll">
       <table className="data-table">
-        <thead><tr><th>Progression</th><th>Numerals</th><th>In {keyName(key)}</th></tr></thead>
+        <thead><tr><th>Progression</th><th>Numerals</th><th>In {keyName(key)}</th><th>Sounds like</th></tr></thead>
         <tbody>
           {PROGRESSIONS.filter(p => p.mode === key.mode && keysFor(p).includes(key.tonic)).map(p => {
             const chords = progressionChords(p, key.tonic);
@@ -101,11 +102,13 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
                 <td><Link href={progressionHref(p, key.tonic)}>{p.name}</Link></td>
                 <td>{p.barsPerRow ? [...new Set(p.numerals)].join(", ") : p.numerals.join(" – ")}</td>
                 <td>{distinct.map(c => c.symbol).join(p.barsPerRow ? ", " : " – ")}</td>
+                <td>{p.sound}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
+      </div>
     </>
   );
 }

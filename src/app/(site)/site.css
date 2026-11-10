@@ -40,3 +40,5 @@
 .chord-grid a{display:block;border:1px solid #2c373d;background:#171e22;border-radius:8px;padding:10px;text-align:center;font-weight:700}
 @media print{.print-btn,.consent,.ad-slot{display:none!important}}
 .print-btn{display:inline-block;text-decoration:none;margin:0 8px 0 0}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-scroll .data-table td:last-child{min-width:180px}

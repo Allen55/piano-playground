@@ -18,8 +18,9 @@ export default function ProgressionsIndex() {
         <section key={style.id}>
           <h2>{style.label}</h2>
           <p>{style.blurb}</p>
+          <div className="table-scroll">
           <table className="data-table">
-            <thead><tr><th>Progression</th><th>Numerals</th><th>Example</th></tr></thead>
+            <thead><tr><th>Progression</th><th>Numerals</th><th>Example</th><th>Sounds like</th></tr></thead>
             <tbody>
               {PROGRESSIONS.filter(p => p.style === style.id).map(p => {
                 const tonic = defaultTonic(p.mode);
@@ -30,11 +31,13 @@ export default function ProgressionsIndex() {
                     <td><Link href={`/progressions/${p.slug}/`}>{p.name}</Link></td>
                     <td>{p.barsPerRow ? distinctSteps(p).map(s => s.numeral).join(", ") : p.numerals.join(" – ")}</td>
                     <td>{tonic} {p.mode}: {shown}</td>
+                    <td>{p.sound}</td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          </div>
         </section>
       ))}
     </>

@@ -8,7 +8,7 @@ const errors=[];
 try {
   const desktop=await browser.newPage({viewport:{width:1600,height:1000}});
   desktop.on("pageerror",error=>errors.push(error.message));
-  await desktop.goto("http://127.0.0.1:3000",{waitUntil:"networkidle"});
+  await desktop.goto("http://127.0.0.1:3000/studio/",{waitUntil:"networkidle"});
   assert.match(await desktop.locator(".key-title").textContent(),/G major/);
   assert.match(await desktop.locator(".chord-symbol").textContent(),/Cmaj7/);
   await desktop.getByRole("button",{name:/Golden Thread/}).click();
@@ -48,7 +48,7 @@ try {
 
   const mobile=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   mobile.on("pageerror",error=>errors.push(error.message));
-  await mobile.goto("http://127.0.0.1:3000",{waitUntil:"networkidle"});
+  await mobile.goto("http://127.0.0.1:3000/studio/",{waitUntil:"networkidle"});
   await mobile.getByRole("button",{name:"Compare chords"}).click();
   assert.equal(await mobile.locator(".comparison-card").count(),4);
   const sizing=await mobile.evaluate(()=>({viewport:window.innerWidth,scroll:document.documentElement.scrollWidth,hero:document.querySelector(".chord-hero")?.getBoundingClientRect().width}));

@@ -69,3 +69,10 @@ export async function playNotes(midis: number[], arpeggiate = false, length = 1.
   const now = voice.tone.now();
   [...new Set(midis)].sort((a, b) => a - b).forEach((midi, i) => voice.play(midi, length, now + (arpeggiate ? i * 0.115 : 0), 0.68));
 }
+
+/** Play notes one after another in the given order (repeats allowed), `gap` seconds apart. */
+export async function playSequence(midis: number[], gap = 0.75, length = 0.9) {
+  const voice = await getVoice();
+  const now = voice.tone.now();
+  midis.forEach((midi, i) => voice.play(midi, length, now + i * gap, 0.7));
+}

@@ -9,5 +9,6 @@ test("sitemap paths are unique, slashed and complete", () => {
   assert.equal(paths.filter(p => p.startsWith("/keys/") && p !== "/keys/").length, 24);
   assert.equal(paths.filter(p => p.startsWith("/chords/") && p !== "/chords/").length, 132);
   assert.ok(paths.includes("/progressions/builder/"));
+  assert.ok(paths.includes("/practice/"));
   assert.ok(paths.includes("/chords/c-sharp-minor/") && paths.includes("/keys/f-sharp-major/"));
 });

@@ -16,18 +16,18 @@ type Props = {
   className?: string;
 };
 
-const S = 10; // staff space
-const BOTTOM = 112; // y of the bottom line
-const yOf = (step: number) => BOTTOM - step * (S / 2);
+export const S = 10; // staff space
+export const BOTTOM = 112; // y of the bottom line
+export const yOf = (step: number) => BOTTOM - step * (S / 2);
 const TONE: Record<StaffTone, string> = { ink: "var(--ink)", correct: "var(--good)", wrong: "var(--bad)", muted: "var(--ink-soft)" };
-const ACC_GLYPH: Record<number, string> = { ...ACC_SIGN, 0: "♮" };
+export const ACC_GLYPH: Record<number, string> = { ...ACC_SIGN, 0: "♮" };
 // Noto Music glyph metrics (measured): baseline drop that centres each accidental on its line or space,
 // and clef baselines that put the treble curl round G4 and the bass dots round F3.
-const ACC_SIZE = 3.6 * S;
-const ACC_DROP: Record<number, number> = { [-2]: 3.5, [-1]: 3.5, 0: 5, 1: 5, 2: 5 };
-const CLEF_BASELINE = { treble: BOTTOM + 1, bass: BOTTOM - 5 };
+export const ACC_SIZE = 3.6 * S;
+export const ACC_DROP: Record<number, number> = { [-2]: 3.5, [-1]: 3.5, 0: 5, 1: 5, 2: 5 };
+export const CLEF_BASELINE = { treble: BOTTOM + 1, bass: BOTTOM - 5 };
 
-function WholeNote({ x, y, fill }: { x: number; y: number; fill: string }) {
+export function WholeNote({ x, y, fill }: { x: number; y: number; fill: string }) {
   // Outer oval with a tilted hollow, the shape of an engraved whole note.
   const rx = 7.2, ry = 5, irx = 3.6, iry = 2.4, rot = -58;
   const t = (rot * Math.PI) / 180;

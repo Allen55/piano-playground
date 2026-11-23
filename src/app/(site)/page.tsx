@@ -4,8 +4,11 @@ import { keyName } from "@/lib/keys";
 import { allKeys, chordAltText, chordPages, chordSlug, inversions, keySlug, LAUNCH_QUALITIES } from "@/lib/reference";
 import { makeChord } from "@/lib/music";
 import { SITE_NAME } from "@/lib/site";
+import { scaleHref, scalePageFor, scaleTitle } from "@/lib/scales";
 
 const POPULAR = [["C", "major"], ["G", "major"], ["D", "major"], ["A", "major"], ["E", "major"], ["F", "major"], ["A", "minor"], ["E", "minor"], ["D", "minor"]] as const;
+
+const POPULAR_SCALES = [["C", "major"], ["A", "natural-minor"], ["A", "minor-pentatonic"], ["C", "blues"], ["E", "blues"], ["D", "dorian"], ["G", "mixolydian"], ["A", "harmonic-minor"], ["C", "major-pentatonic"]] as const;
 
 export default function HomePage() {
   const chords = chordPages(LAUNCH_QUALITIES);
@@ -24,6 +27,12 @@ export default function HomePage() {
       <h2>Start with a key</h2>
       <p>Each key page lists the scale, the seven chords in the key and every inversion of each chord. <Link href="/keys/">All 24 keys</Link></p>
       <div className="chord-grid">{allKeys().map(k => <Link key={keySlug(k)} href={`/keys/${keySlug(k)}/`}>{keyName(k)}</Link>)}</div>
+
+      <h2>Scales and modes</h2>
+      <p>Every scale written on the staff and shown on the keyboard, in all 12 keys: the major modes, harmonic and melodic minor, pentatonic and blues, jazz, symmetric and world scales. <Link href="/scales/">All scales</Link></p>
+      <div className="chord-grid">
+        {POPULAR_SCALES.map(([tonic, id]) => { const p = scalePageFor(tonic, id); return <Link key={id + tonic} href={scaleHref(p)}>{scaleTitle(p)}</Link>; })}
+      </div>
 
       <h2>Common chords</h2>
       <div className="chord-grid">

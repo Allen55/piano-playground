@@ -9,9 +9,16 @@ import { SITE_URL } from "@/lib/site";
 import { PROGRESSIONS, keysFor, progressionChords, progressionHref } from "@/lib/progressions";
 import { allKeys, chordHref, chordSlug, isLaunchChord, keySlug, pageChordFor, parseKeySlug } from "@/lib/reference";
 import { keyName, parallelKey, relativeKey, scaleMidi } from "@/lib/keys";
+import { modesOf, scaleHref, scalePageFor, scaleSlug, scaleTitle } from "@/lib/scales";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return allKeys().map(k => ({ slug: keySlug(k) })); }
+
+/** Scales worth trying over each kind of key, besides its own modes. */
+const KEY_SCALES: Record<Mode, string[]> = {
+  major: ["major-pentatonic", "major-blues", "blues", "lydian", "mixolydian", "bebop-major", "harmonic-major"],
+  minor: ["harmonic-minor", "melodic-minor", "minor-pentatonic", "blues", "dorian", "phrygian", "hungarian-minor"],
+};
 
 const STEPS: Record<Mode, string> = { major: "whole, whole, half, whole, whole, whole, half", minor: "whole, half, whole, whole, half, whole, whole" };
 
@@ -40,6 +47,8 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
   const relative = relativeKey(key);
   const parallel = parallelKey(key);
   const scale = scaleMidi(info.notes);
+  const parentMajor = key.mode === "major" ? key : relative;
+  const modes = modesOf(scalePageFor(parentMajor.tonic, "major"));
   const keyLink = (k: typeof key) => <Link href={`/keys/${keySlug(k)}/`}>{keyName(k)}</Link>;
   return (
     <>
@@ -59,6 +68,17 @@ export default async function KeyPage({ params }: { params: Promise<{ slug: stri
       <div className="panel-box">
         <KeyboardSvg label={`${keyName(key)} scale on a piano keyboard: ${info.notes.join(", ")}, ${key.tonic}`} notes={scale.map((midi, i) => ({ midi, role: i === 0 || i === 7 ? "root" : "fifth", label: [...info.notes, key.tonic][i] }))} />
       </div>
+
+      <h2>Scales and modes in {keyName(key)}</h2>
+      <p>These seven modes use exactly the notes of {keyName(key)}{key.mode === "minor" && <> (the same notes as {keyName(relative)})</>}, each starting on a different degree. Each page shows the scale on the staff and keyboard.</p>
+      <ul className="chip-list">
+        {modes.map(m => <li key={scaleSlug(m)}><Link className="chip" href={scaleHref(m)}>{scaleTitle(m)}</Link></li>)}
+      </ul>
+      <p style={{ marginTop: 14 }}>Other scales starting on {key.tonic}, for melodies and improvising:</p>
+      <ul className="chip-list">
+        {KEY_SCALES[key.mode].map(id => scalePageFor(key.tonic, id)).map(p => <li key={scaleSlug(p)}><Link className="chip" href={scaleHref(p)}>{scaleTitle(p)}</Link></li>)}
+        <li><Link className="chip" href="/scales/">All scales</Link></li>
+      </ul>
 
       <h2>Chords in {keyName(key)}</h2>
       <p>Each note of the scale builds one triad using only notes from the key. The Roman numeral shows the scale degree; capitals are major, lowercase are minor or diminished.</p>

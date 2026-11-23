@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Noto_Music } from "next/font/google";
+import { musicFont as music } from "@/components/music-font";
 import { PracticeGame } from "@/components/practice/practice-game";
 import { SITE_URL } from "@/lib/site";
-
-// Engraving glyphs (clefs, sharps, flats, double accidentals) come from Noto Music so the staff looks the same everywhere.
-const music = Noto_Music({ weight: "400", subsets: ["music"], variable: "--font-music", display: "block" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -43,3 +43,9 @@
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .table-scroll .data-table td:last-child{min-width:180px}
 @media (max-width:600px){.site-header-inner{height:auto;min-height:56px;flex-wrap:wrap;gap:4px 16px;padding-top:10px;padding-bottom:10px}.site-nav{gap:14px;flex-wrap:wrap}}
+.staff-paper{--ink:#1c2226;--ink-soft:#66737a;--accent:#a8662a;background:#f6f2e9;border-radius:10px;padding:14px 16px;display:grid;gap:6px;overflow-x:auto}
+.staff-paper svg{min-width:420px}
+.music-glyph{font-family:var(--font-music),"Segoe UI Symbol","Noto Music",serif}
+.chip-current{background:#2c4350;border-color:#83adc4;color:#e6f2f8;font-weight:700}
+.scale-table td:last-child{line-height:2}
+.scale-table .chip{padding:2px 8px;margin:0 4px 4px 0;font-size:13px}

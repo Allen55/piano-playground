@@ -10,6 +10,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <Link href="/" className="site-brand">{SITE_NAME}<span>.</span></Link>
           <nav className="site-nav" aria-label="Main">
             <Link href="/keys/">Keys</Link>
+            <Link href="/scales/">Scales</Link>
             <Link href="/chords/">Chords</Link>
             <Link href="/progressions/">Progressions</Link>
             <Link href="/practice/">Practice</Link>

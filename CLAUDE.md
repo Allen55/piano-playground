@@ -6,6 +6,7 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 
 - `src/app/(site)/` — the public reference site (keys, chords, progressions, about/privacy/contact). Server-rendered pages.
 - `src/app/(print)/print/` — printable key and progression sheets (light theme, Letter/A4 picker, `noindex`, not in the sitemap). Small print diagrams use `SheetDiagram`, which crops to an 8-white-key window (`fitWindow`) so labels stay readable.
+- `src/app/(site)/scales/` — scale and mode pages (`/scales/c-dorian/`): every scale in `scales.ts` on all 12 tonics, written on treble and bass staves (`scale-staff.tsx`) and the keyboard. Aeolian pages are canonical to natural minor and left out of the sitemap. Key hubs link to their modes.
 - `src/app/(site)/practice/` — sight-reading and interval trainer (`/practice/`). The page is server-rendered; the game is the client component in `src/components/practice/` (staff SVG, 88-key piano, note-reading and interval quizzes). Filters are remembered in localStorage.
 - `src/app/studio/` — the interactive Studio (client component). Keep it separate from the public site: site pages must not import Studio code.
 - `src/lib/` — the pure music engine. No React, no DOM, no audio here.
@@ -16,6 +17,7 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
   - `builder.ts` — progression builder state: typed-progression parsing and the shareable URL (`?key=g-major&p=1-5-6-4&chords=sevenths&inv=smooth`). The Studio reads the same query to import a progression.
   - `notation.ts` — written pitch (letter + accidental + octave), staff steps, ledger lines, key signatures, note-reading filters, shuffled draws.
   - `intervals.ts` — interval naming and spelling (enharmonics kept distinct), ear-training distances, question generation, explanations.
+  - `scales.ts` — scale catalog defined by formula (`1 ♭3 4 ♭5 5 ♭7`); the formula drives spelling, so letters can repeat (C blues has G♭ and G). Picks the cleanest tonic spelling per scale, respells unavoidable double accidentals, staff pitches, chords by stacking thirds, parent scales and modes.
   - `site-paths.ts` — every indexable path; feeds `sitemap.ts`. Add new public routes here.
   - `audio.ts`, `samples.ts` — Tone.js playback and the Salamander piano samples (CC BY 3.0, credited on About).
 - `src/components/` — shared UI. `keyboard-svg.tsx` draws diagrams (pages with hundreds of diagrams, like the chart, render `<KeyboardDefs />` once and pass `shared` so each diagram draws only its pressed keys); `instrument-toggle.tsx` is the Synth/Piano switch.

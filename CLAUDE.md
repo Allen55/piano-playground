@@ -1,6 +1,6 @@
 # Piano Playground
 
-An ad-monetized piano reference site (chords, scales, keys, progressions) built on a Next.js 15 playground, plus an interactive Studio.
+A free piano reference site (chords, scales, keys, progressions) built on a Next.js 15 playground, plus an interactive Studio.
 
 ## Layout
 
@@ -28,7 +28,6 @@ An ad-monetized piano reference site (chords, scales, keys, progressions) built 
 - Keep piano diagrams and chord/scale content server-rendered (SVG in HTML), so pages are indexable and work without JS. Only playback controls and toggles are client components.
 - Public URLs use trailing slashes (`trailingSlash: true`) and ASCII slugs (`f-sharp`, `b-flat-minor-7`).
 - Put music logic in `src/lib` with tests, not in page components.
-- Ads only render behind the consent banner (`ad-slot.tsx`, `consent.ts`).
 
 ## Workflow
 

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdSlot } from "@/components/ad-slot";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { musicFont } from "@/components/music-font";
 import { ScalePlayer } from "@/components/scale-player";
@@ -103,7 +102,6 @@ export default async function ScalePageView({ params }: { params: Promise<{ slug
         </tbody>
       </table>
 
-      <AdSlot />
 
       {chords.length > 0 && <>
         <h2>Chords in the {title} scale</h2>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChordExplorer } from "@/components/chord-explorer";
-import { AdSlot } from "@/components/ad-slot";
 import { KeyboardSvg } from "@/components/keyboard-svg";
 import { CHORDS, makeChord, spell, type Chord } from "@/lib/music";
 import { keyName } from "@/lib/keys";
@@ -221,7 +220,6 @@ export default async function ChordPage({ params }: { params: Promise<{ slug: st
         ))}
       </div>
 
-      <AdSlot />
 
       <KeysSection chord={chord} />
 

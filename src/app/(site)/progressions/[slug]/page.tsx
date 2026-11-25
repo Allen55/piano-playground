@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdSlot } from "@/components/ad-slot";
 import { ProgressionStrip } from "@/components/progression-strip";
 import { CHORDS } from "@/lib/music";
 import { SITE_URL } from "@/lib/site";
@@ -60,7 +59,6 @@ export default async function ProgressionPage({ params }: { params: Promise<{ sl
       {p.about && <p>{p.about}</p>}
       <ProgressionStrip slug={p.slug} />
 
-      <AdSlot />
 
       <h2>What each chord is</h2>
       <ul>

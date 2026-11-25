@@ -14,7 +14,6 @@ const marks = page => page.evaluate(s => [...document.querySelectorAll(`${s} [da
 async function open(page, notes, intervals) {
   await page.goto(`${BASE}/practice/`, { waitUntil: "networkidle" });
   await page.evaluate(([n, i]) => {
-    localStorage.setItem("ad-consent", "denied");
     if (n) localStorage.setItem("practice-note-filters", JSON.stringify(n)); else localStorage.removeItem("practice-note-filters");
     if (i) localStorage.setItem("practice-interval-filters", JSON.stringify(i)); else localStorage.removeItem("practice-interval-filters");
   }, [notes, intervals]);

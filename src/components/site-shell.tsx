@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ConsentBanner, PrivacySettingsButton } from "@/components/consent-banner";
 import { SITE_NAME } from "@/lib/site";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -26,11 +25,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <Link href="/about/">About</Link>
             <Link href="/privacy/">Privacy</Link>
             <Link href="/contact/">Contact</Link>
-            <PrivacySettingsButton />
           </span>
         </div>
       </footer>
-      <ConsentBanner />
     </div>
   );
 }

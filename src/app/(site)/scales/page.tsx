@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdSlot } from "@/components/ad-slot";
 import { FAMILIES, SCALES, scaleHref, scalePages, scaleSpelling } from "@/lib/scales";
 import { SITE_URL } from "@/lib/site";
 
@@ -19,7 +18,7 @@ export default function ScalesIndex() {
       <h1>Piano scales and modes</h1>
       <p className="lede">{SCALES.length} scales and modes in all 12 keys. Every page writes the scale on the treble and bass staff, shows it on the keyboard, lists its intervals and plays it for you.</p>
       <p>Jump to: {FAMILIES.map((f, i) => <span key={f.id}>{i > 0 && " · "}<a href={`#${f.id}`}>{f.name}</a></span>)}</p>
-      {FAMILIES.map((f, i) => (
+      {FAMILIES.map((f) => (
         <section key={f.id} id={f.id}>
           <h2>{f.name}</h2>
           <p>{f.blurb}</p>
@@ -41,7 +40,6 @@ export default function ScalesIndex() {
               </tbody>
             </table>
           </div>
-          {i === 1 && <AdSlot />}
         </section>
       ))}
     </>

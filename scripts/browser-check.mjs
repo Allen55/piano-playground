@@ -44,7 +44,7 @@ try {
   await desktop.getByPlaceholder("E minor study").fill("E minor colors");
   await desktop.getByRole("button",{name:"Save progression"}).click();
   assert.match(await desktop.locator(".saved-item").first().textContent(),/E minor colors/);
-  await desktop.screenshot({path:join(tmpdir(),"keyframe-desktop.png")});
+  await desktop.screenshot({path:join(tmpdir(),"piano-playground-desktop.png")});
 
   const mobile=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   mobile.on("pageerror",error=>errors.push(error.message));
@@ -52,7 +52,7 @@ try {
   await mobile.getByRole("button",{name:"Compare chords"}).click();
   assert.equal(await mobile.locator(".comparison-card").count(),4);
   const sizing=await mobile.evaluate(()=>({viewport:window.innerWidth,scroll:document.documentElement.scrollWidth,hero:document.querySelector(".chord-hero")?.getBoundingClientRect().width}));
-  await mobile.screenshot({path:join(tmpdir(),"keyframe-mobile.png")});
+  await mobile.screenshot({path:join(tmpdir(),"piano-playground-mobile.png")});
   assert.ok(sizing.scroll<=sizing.viewport+1,`mobile overflow ${JSON.stringify(sizing)}`);
   await mobile.getByRole("button",{name:"Open menu"}).click();
   assert.equal(await mobile.locator(".left-sidebar").evaluate(el=>el.classList.contains("mobile-open")),true);

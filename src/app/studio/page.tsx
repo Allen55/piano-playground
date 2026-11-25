@@ -120,7 +120,7 @@ export default function Home() {
 
   return <div className={`app-shell ${focus?"is-focus":""}`}>
     <header className="topbar">
-      <div className="brand"><div className="brand-mark"><AudioLines size={20} strokeWidth={2.5}/></div><div className="brand-name">keyframe<span>.</span></div><span className="brand-divider"/><span className="brand-subtitle">PIANO PLAYGROUND</span></div>
+      <div className="brand"><div className="brand-mark"><AudioLines size={20} strokeWidth={2.5}/></div><div className="brand-name">piano playground<span>.</span></div><span className="brand-divider"/><span className="brand-subtitle">STUDIO</span></div>
       <div className="topbar-center"><span className="status-dot"/> <span>STUDIO SESSION</span><span className="topbar-sep">/</span><strong>{tonic} {mode}</strong></div>
       <div className="topbar-actions"><button className="text-control" onClick={()=>{setFocus(!focus);if(!focus)setCompareChords(false)}}><Focus size={16}/><span>{focus?"Exit focus":"Focus mode"}</span></button><button className="mobile-menu" onClick={()=>setMobilePanel(mobilePanel?null:"left")} aria-label="Open menu"><Menu size={20}/></button><div className="avatar">K</div></div>
     </header>

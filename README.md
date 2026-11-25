@@ -1,4 +1,4 @@
-# Keyframe Piano Playground
+# Piano Playground
 
 An interactive piano and harmony workspace built with Next.js, TypeScript, Tailwind CSS, shadcn-style UI primitives, and Tone.js.
 
